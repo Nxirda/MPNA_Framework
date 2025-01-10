@@ -45,18 +45,7 @@ struct timespec get_elapsed_as_timespec(chrono_t self);
 //
 duration_t get_elapsed_time(chrono_t self);
 
-//
-i8 compare_durations(duration_t a, duration_t b);
-
-//
-void print_chrono(chrono_t self);
-
 f64 duration_as_s_f64(duration_t self);
 f64 duration_as_ms_f64(duration_t self);
 f64 duration_as_us_f64(duration_t self);
 f64 duration_as_ns_f64(duration_t self);
-
-// Might need additionnal functions at some point 
-// in order to have conversions directly without 
-// using the get_elapsed functions 
-// something like : duration_as_s_f64 or other

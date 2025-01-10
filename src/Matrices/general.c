@@ -15,16 +15,16 @@ void allocate_matrix(usz mesh_size, matrix_t *matrix)
     usz N = mesh_size * mesh_size;
 
     matrix->size = N;
-    matrix->values = (f64 *)calloc(N * N, sizeof(f64));
+    matrix->data = (f64 *)calloc(N * N, sizeof(f64));
     printf("Allocated size : %ld\n", N * N * sizeof(f64));
 }
 
 void fill_matrix(usz mesh_size, matrix_t matrix)
 {
-    assert(matrix.values != NULL && mesh_size > 0);
+    assert(matrix.data != NULL && mesh_size > 0);
 
     const usz N = matrix.size;
-    f64 (* tmp_matrix)[N] = make_2D_span(f64, ,matrix.values, N);
+    f64 (* tmp_matrix)[N] = make_2D_span(f64, ,matrix.data, N);
     
     // This order is due to how we parse the mesh into a matrix
     for(usz j = 0; j < mesh_size; j++)
@@ -58,7 +58,7 @@ void fill_matrix(usz mesh_size, matrix_t matrix)
 void print_matrix(matrix_t matrix)
 {
     usz N = matrix.size;
-    f64 (*tmp_matrix)[N] = make_2D_span(f64, , matrix.values, N);
+    f64 (*tmp_matrix)[N] = make_2D_span(f64, , matrix.data, N);
     printf("Matrix size : %ld\n", N);
 
     for(usz i = 0; i < N; i++)
@@ -76,6 +76,6 @@ void print_matrix(matrix_t matrix)
 
 void free_matrix(matrix_t matrix)
 {
-    assert(matrix.values != NULL);
-    free(matrix.values);
+    assert(matrix.data != NULL);
+    free(matrix.data);
 }

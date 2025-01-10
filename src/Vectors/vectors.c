@@ -48,3 +48,21 @@ void swap_vector(vector_t *a, vector_t *b)
     b->data = a->data;
     a->data = tmp;
 }
+
+u8 equal_vector(vector_t *a, vector_t *b)
+{
+    if(a->size != b->size)
+    {
+        return 0;
+    }
+
+    for(usz i = 0; i < a->size; i++)
+    {
+        if(a->data[i] != b->data[i])
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}

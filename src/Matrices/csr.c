@@ -20,16 +20,16 @@ void allocate_CSR(usz mesh_size, csr_matrix_t *matrix)
     const usz NNZ = count_NNZ_elements(mesh_size, N);
 
     matrix->size = N;
-    matrix->values = (f64 *)malloc(NNZ * sizeof(f64));
+    matrix->data = (f64 *)malloc(NNZ * sizeof(f64));
     matrix->col_index = (usz *)malloc(NNZ    * sizeof(usz));
     matrix->row_index = (usz *)malloc((N+1)  * sizeof(usz));
 
-    //usz bytes_values = NNZ * sizeof(f64);
+    //usz bytes_data = NNZ * sizeof(f64);
     //usz bytes_col = NNZ * sizeof(usz);
     //usz bytes_row = (N+1) * sizeof(usz);
-    //usz total = bytes_values + bytes_col + bytes_row;
+    //usz total = bytes_data + bytes_col + bytes_row;
     //printf("Allocated size : %ld, %ld, %ld, total : %ld\n", 
-    //        bytes_values, bytes_col, bytes_row, total);
+    //        bytes_data, bytes_col, bytes_row, total);
 }
 
 /*
@@ -57,7 +57,7 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
             if(j > 0)
             {
                 usz col = to_matrix_id(i,j-1, mesh_size);
-                matrix->values[CSR_idx] = -1.0;
+                matrix->data[CSR_idx] = -1.0;
                 matrix->col_index[CSR_idx] = col;
                 CSR_idx ++;
             }
@@ -65,13 +65,13 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
             if(i > 0)
             {
                 usz col = to_matrix_id(i-1,j, mesh_size);
-                matrix->values[CSR_idx] = -1.0;
+                matrix->data[CSR_idx] = -1.0;
                 matrix->col_index[CSR_idx] = col;
                 CSR_idx ++;
             }
            
             usz col = to_matrix_id(i, j, mesh_size);
-            matrix->values[CSR_idx] = 4.0;
+            matrix->data[CSR_idx] = 4.0;
             matrix->col_index[CSR_idx] = col;
             CSR_idx ++;
 
@@ -79,7 +79,7 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
             if(i < mesh_size -1)
             {
                 usz col = to_matrix_id(i+1,j, mesh_size);
-                matrix->values[CSR_idx] = -1.0;
+                matrix->data[CSR_idx] = -1.0;
                 matrix->col_index[CSR_idx] = col;
                 CSR_idx ++;
             }
@@ -87,7 +87,7 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
             if(j < mesh_size -1)
             {
                 usz col = to_matrix_id(i,j+1, mesh_size);
-                matrix->values[CSR_idx] = -1.0;
+                matrix->data[CSR_idx] = -1.0;
                 matrix->col_index[CSR_idx] = col;
                 CSR_idx ++;
             }
@@ -100,7 +100,7 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
 
 void print_CSR(csr_matrix_t *matrix)
 {
-    assert(matrix->values != NULL);
+    assert(matrix->data != NULL);
  
     usz idx = 0;
 
@@ -112,7 +112,7 @@ void print_CSR(csr_matrix_t *matrix)
         {
             if(elems_in_row > 0 && matrix->col_index[idx] == j)
             {
-                printf("%-2.3f ", matrix->values[idx]);
+                printf("%-2.3f ", matrix->data[idx]);
                 elems_in_row --;
                 idx ++;
             }
@@ -133,5 +133,5 @@ void free_CSR(csr_matrix_t *matrix)
 
     free(matrix->col_index);
     free(matrix->row_index);
-    free(matrix->values);
+    free(matrix->data);
 }

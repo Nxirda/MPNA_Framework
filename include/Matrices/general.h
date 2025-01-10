@@ -5,7 +5,7 @@
 typedef struct matrix_s
 {
     usz size;
-    f64 *values;
+    f64 *data;
 } matrix_t;
 
 extern void allocate_matrix(usz mesh_size, matrix_t *matrix);

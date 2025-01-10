@@ -1,23 +1,19 @@
-#include "jacobi.h"
+#include "gauss_seidel.h"
 
 #include <assert.h>
 
-void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations)
+void gauss_seidel_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations)
 {
     assert(matrix && x && b );
 
     const usz N = x->size;
-
-    vector_t swap_x;
-    allocate_vector(&swap_x, N);
-    
     f64 (*A)[N] = make_2D_span(f64, , matrix->data, N); 
     
     i8 converged = 0;
-    u64 k = 0;
+    u64 k = 0; 
+    f64 tmp_x = 0.0;
     f64 tmp_a = 0.0;
     f64 tmp_b = 0.0;
-    f64 tmp_x = 0.0;
 
     while(!converged && k < max_iterations)
     {
@@ -37,22 +33,17 @@ void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
             {
                 tmp_x += A[i][j] * x->data[j];
             }
-
-            swap_x.data[i] = tmp_a * (tmp_b - tmp_x);    
+            
+            x->data[i] = tmp_a * (tmp_b - tmp_x);    
         } 
-        swap_vector(x, &swap_x);
         k ++;
     }
-    free_vector(&swap_x);
 }
 
-void jacobi_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations)
+void gauss_seidel_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations)
 {
-    const usz N = x->size;
+    const usz N = x->size; 
     i8 converged = 0;
-
-    vector_t swap_x;
-    allocate_vector(&swap_x, N);
     
     u64 k           = 0;
     usz idx         = 0;
@@ -63,36 +54,33 @@ void jacobi_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
     f64 tmp_b   = 0.0;
     f64 tmp_x   = 0.0;
     f64 Aij     = 0.0;
-    
+
     while(!converged && k < max_iterations)
     {
         idx = 0;
-
         for(usz i = 0; i < N; i++)
         {
-            tmp_a = 0.0;
+            tmp_a = 0.0; 
             tmp_b = b->data[i];
-            tmp_x = 0.0; 
+            tmp_x = 0.0;
             nb_elems = matrix->row_index[i+1] - matrix->row_index[i];
             
             for(usz j = 0; j < nb_elems; j++, idx++)
             {
                 curr_col = matrix->col_index[idx];
                 Aij = matrix->data[idx];
-                
+
                 if(curr_col != i)
                 {
                     tmp_x += Aij * x->data[curr_col];
                 }
-                else
+                else // diagonal elem
                 {
                     tmp_a = 1.0/Aij;
                 }
             }
-            swap_x.data[i] = tmp_a * (tmp_b - tmp_x);
+            x->data[i] = tmp_a * (tmp_b - tmp_x);
         }
-        swap_vector(x, &swap_x);
         k++;
     }
-    free_vector(&swap_x);
 }

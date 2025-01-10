@@ -13,3 +13,5 @@ extern void fill_vector(vector_t *vector, usz begin);
 extern void print_vector(vector_t *vector);
 extern void free_vector(vector_t *vector);
 extern void swap_vector(vector_t *a, vector_t *b);
+
+extern u8 equal_vector(vector_t *a, vector_t *b);
