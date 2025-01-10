@@ -1,4 +1,4 @@
-Project Framework 
+# Project Framework 
 
 1) Size of grid (param) : N
 create a matrix of size N^2 * N^2 in:
@@ -22,12 +22,9 @@ convergence charts
 Get storage size for a type
 (NNZ elems, nb elems for each thing)
 
-Benchmarks
+# Benchmarks
 
-# Teacher email : 
-
-cedric.chevalier@cea.fr
 
 # Ressources : 
-https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html
+https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html  
 https://en.wikipedia.org/wiki/Sparse_matrix
