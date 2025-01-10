@@ -39,3 +39,12 @@ void free_vector(vector_t *vector)
     assert(vector != NULL && vector->data != NULL);
     free(vector->data);
 }
+
+void swap_vector(vector_t *a, vector_t *b)
+{
+    assert(a && b && a->data && b->data);
+
+    f64 *tmp = b->data;
+    b->data = a->data;
+    a->data = tmp;
+}
