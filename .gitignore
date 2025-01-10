@@ -1,6 +1,12 @@
 # Prerequisites
 *.d
 
+# CMake directories
+[Bb]uild
+[Dd]ebug
+[Rr]elease
+cmake-build-*
+
 # Object files
 *.o
 *.ko
