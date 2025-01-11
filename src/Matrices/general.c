@@ -16,7 +16,7 @@ void allocate_matrix(usz mesh_size, matrix_t *matrix)
 
     matrix->size = N;
     matrix->data = (f64 *)calloc(N * N, sizeof(f64));
-    printf("Allocated size : %ld\n", N * N * sizeof(f64));
+    //printf("Allocated size : %ld\n", N * N * sizeof(f64));
 }
 
 void fill_matrix(usz mesh_size, matrix_t matrix)

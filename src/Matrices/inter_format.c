@@ -6,7 +6,7 @@ usz NNZ_in_general(matrix_t const *a)
 {
     const usz N = a->size;
     usz NNZ = 0;
-    f64 (* a_span)[N] = make_2D_span(f64, , a, N);
+    f64 (* a_span)[N] = make_2D_span(f64, , a->data, N);
 
     for(usz i = 0; i < N; i++)
     {
@@ -29,7 +29,7 @@ matrix_t csr_to_general(csr_matrix_t const *a)
     u64 idx = 0;
     usz row_elems = 0;
     f64 *new_data = (f64 *)malloc(N * N * sizeof(f64));
-    f64 (* a_span)[N] = make_2D_span(f64, , a, N);
+    f64 (* a_span)[N] = make_2D_span(f64, , new_data, N);
 
     for(usz i = 0; i < N; i++)
     {
@@ -63,7 +63,7 @@ matrix_t general_to_general(matrix_t const *a)
     const usz N = a->size;
     f64 *new_data = (f64 *)malloc(N * N * sizeof(f64));
     f64 (* new_span)[N] = make_2D_span(f64, , new_data, N);
-    f64 (* span)[N] = make_2D_span(f64, , a, N);
+    f64 (* span)[N] = make_2D_span(f64, , a->data, N);
 
     for(usz i = 0; i < N; i++)
     {
@@ -82,7 +82,7 @@ matrix_t general_to_general(matrix_t const *a)
 
 csr_matrix_t csr_to_csr(csr_matrix_t const *a)
 {
-    const usz NNZ   = a->row_index[a->size +1];
+    const usz NNZ   = a->row_index[a->size];
     const usz N     = a->size;
     
     f64 *new_data = (f64 *)malloc(NNZ * sizeof(f64));
@@ -111,7 +111,6 @@ csr_matrix_t csr_to_csr(csr_matrix_t const *a)
 
 csr_matrix_t general_to_csr(matrix_t const *a)
 {
-    
     const usz NNZ   = NNZ_in_general(a);
     const usz N     = a->size;
     
@@ -120,15 +119,15 @@ csr_matrix_t general_to_csr(matrix_t const *a)
     usz *new_rows = (usz *)malloc((N+1) * sizeof(usz));
 
     u64 idx = 0;
-    new_rows[idx] = 0;
+    new_rows[0] = 0;
 
-    f64 (* a_span)[N] = make_2D_span(f64, , a, N);
+    f64 (* a_span)[N] = make_2D_span(f64, , a->data, N);
 
     for(usz i = 0; i < N; i++)
     {
         for(usz j = 0; j < N; j++)
         { 
-            if(a_span[i][j] != 0.0);
+            if(a_span[i][j] != 0.0)
             {
                 new_data[idx] = a_span[i][j];
                 new_cols[idx] = j;
@@ -149,9 +148,34 @@ csr_matrix_t general_to_csr(matrix_t const *a)
 
 u8 csr_equal_csr(csr_matrix_t const *a, csr_matrix_t const *b)
 {
+    const usz N     = a->size;
+    const usz NNZ   = a->row_index[N];
+    
+    if((N != b->size) && (NNZ != b->row_index[b->size]))
+    {
+        return 0;
+    }
+    
+    for(usz i = 0; i < NNZ; i++)
+    {
+        if( (a->data[i] != b->data[i]) && 
+            (a->col_index[i] != b->col_index[i]))
+        {
+            return 0;
+        }
+    }
+
+    for(usz i = 0; i < N+1; i++)
+    {
+        if(a->row_index[i] != b->row_index[i])
+        {
+            return 0;
+        }
+    }
+
     return 1;
 }
-#include <stdio.h>
+
 u8 general_equal_csr(matrix_t const *a, csr_matrix_t const *b)
 {
     const usz N = a->size;
@@ -163,7 +187,7 @@ u8 general_equal_csr(matrix_t const *a, csr_matrix_t const *b)
     
     u64 idx = 0;
     usz row_elems = 0;
-    f64 (* a_span)[N] = make_2D_span(f64,, a->data, N);
+    f64 (* a_span)[N] = make_2D_span(f64, , a->data, N);
 
     for(usz i = 0; i < N; i++)
     {
@@ -202,8 +226,8 @@ u8 general_equal_general(matrix_t const *a, matrix_t const *b)
         return 0;
     }
 
-    f64 (* a_span)[N] = make_2D_span(f64, , b, N);
-    f64 (* b_span)[N] = make_2D_span(f64, , a, N);
+    f64 (* a_span)[N] = make_2D_span(f64, , a->data, N);
+    f64 (* b_span)[N] = make_2D_span(f64, , b->data, N);
 
     for(usz i = 0; i < N; i++)
     {

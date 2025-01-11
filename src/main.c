@@ -31,16 +31,6 @@ int main(int argc, char **argv)
     fill_matrix(mesh_size, general);
     print_matrix(general);
 
-    u8 csr_e_ge = general_equal_csr(&general, &csr);
-    if(csr_e_ge)
-    {
-        printf("csr and general matrices are the same\n");
-    }
-    else
-    {
-        printf("The two matrices are different\n");
-    }
-    printf("\n");
 /******************************************************************************/
     printf("====== Jacobi Testing (quick) ======\n");
     

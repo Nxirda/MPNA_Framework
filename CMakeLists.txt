@@ -22,3 +22,11 @@ add_subdirectory(src)
 add_executable(main.exe src/main.c)
 target_include_directories(main.exe PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(main.exe PRIVATE Source_Lib)
+
+# Tests : Have to ensure compile options are Debug ones here 
+enable_testing()
+
+add_subdirectory(test)
+
+add_executable(tests.exe test/main.c)
+target_link_libraries(tests.exe PRIVATE Test_lib)

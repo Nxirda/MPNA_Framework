@@ -20,9 +20,9 @@ void allocate_CSR(usz mesh_size, csr_matrix_t *matrix)
     const usz NNZ = count_NNZ_elements(mesh_size, N);
 
     matrix->size = N;
-    matrix->data = (f64 *)malloc(NNZ * sizeof(f64));
-    matrix->col_index = (usz *)malloc(NNZ    * sizeof(usz));
-    matrix->row_index = (usz *)malloc((N+1)  * sizeof(usz));
+    matrix->data        = (f64 *)malloc(NNZ * sizeof(f64));
+    matrix->col_index   = (usz *)malloc(NNZ    * sizeof(usz));
+    matrix->row_index   = (usz *)malloc((N+1)  * sizeof(usz));
 
     //usz bytes_data = NNZ * sizeof(f64);
     //usz bytes_col = NNZ * sizeof(usz);
@@ -36,7 +36,6 @@ void allocate_CSR(usz mesh_size, csr_matrix_t *matrix)
  * Starting from a mesh of size N by N 
  * Returns the CSR representation as a N^2 * N^2 matrix
  * */
-// NOTE : can ppbly simplify the loop by changing i=0, mesh_size to i=1, mesh_size -1 (same on j)
 void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
 {
     assert(matrix != NULL && mesh_size > 0);
@@ -51,7 +50,7 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
     {
         for(usz i = 0; i < mesh_size; i++) 
         {
-            usz old_Idx = CSR_idx;
+           //usz old_Idx = CSR_idx;
 
             //Far left 
             if(j > 0)

@@ -1,14 +1,14 @@
 # Project Framework 
 
-1) Size of grid (param) : N
-create a matrix of size N^2 * N^2 in:
+1) Size of mesh grid (param) : n
+create a matrix of size n^2 * n^2 in :  
     -> CSR
     -> and is sparse
 
 Using a stencil beeing : 
-    -1
-  -1 4 -1
-    -1
+    -1  
+  -1 4 -1  
+    -1  
 
 3) Then sequential jacobi implem
 2) Then Gauss Seidel
