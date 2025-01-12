@@ -36,18 +36,25 @@ int main(int argc, char **argv)
     vector_t x_csr;
     allocate_vector(&x_csr, nb_bytes);
 
-    //printf("====== Matrix in CSR storage format ======\n");
+    printf("====== Matrix in CSR storage format ======\n");
     csr_matrix_t csr;
     allocate_CSR(mesh_size, &csr);
     fill_CSR(mesh_size, &csr);
-    //print_CSR(&csr);
+    print_CSR(&csr);
    
-    //printf("====== Matrix in general storage format ======\n");
+    printf("====== Matrix in general storage format ======\n");
     matrix_t general;
     allocate_matrix(mesh_size, &general);
     fill_matrix(mesh_size, general);
-    //print_matrix(general);
+    print_matrix(general);
+    
+    printf("====== Matrix in general CSC format ======\n");
+    csc_matrix_t csc;
+    allocate_CSC(mesh_size, &csc);
+    fill_CSC(mesh_size, &csc);
+    print_CSC(&csc);
 
+    exit(1);
     init_random_vector(&b, min, max);
 /******************************************************************************/
     printf("====== Jacobi Testing (quick) ======\n");

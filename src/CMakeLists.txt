@@ -3,6 +3,7 @@ add_library(Source_Lib
 
     Matrices/general.c 
     Matrices/csr.c
+    Matrices/csc.c
     Matrices/inter_format.c
 
     Solvers/jacobi.c

@@ -59,7 +59,6 @@ void print_matrix(matrix_t matrix)
 {
     usz N = matrix.size;
     f64 (*tmp_matrix)[N] = make_2D_span(f64, , matrix.data, N);
-    printf("Matrix size : %ld\n", N);
 
     for(usz i = 0; i < N; i++)
     {
