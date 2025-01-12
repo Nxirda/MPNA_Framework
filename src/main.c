@@ -8,7 +8,10 @@ int main(int argc, char **argv)
 
     usz mesh_size = 4;
     u64 nb_bytes = mesh_size * mesh_size;
-    u64 iter = 3;
+    u64 iter = 30;
+
+    f64 min = 10e-12;
+    f64 max = 10e12;
 
     vector_t b;
     allocate_vector(&b, nb_bytes);
@@ -31,25 +34,20 @@ int main(int argc, char **argv)
     fill_matrix(mesh_size, general);
     print_matrix(general);
 
+    init_random_vector(&b, min, max);
 /******************************************************************************/
     printf("====== Jacobi Testing (quick) ======\n");
     
     printf("CSR : \n");
-    fill_vector(&b, 1.0);
-    fill_vector(&x_general, 3.3);
-    fill_vector(&x_csr, 3.3);
 
+    init_constant_vector(&x_csr, 0.0);
     jacobi_csr(&csr, &x_csr, &b, iter);
-
     printf("LHS is :\n");
     print_vector(&x_csr);
 
     printf("General : \n");
-    fill_vector(&b, 1.0);
-    fill_vector(&x_general, 3.3);
-    
+    init_constant_vector(&x_general, 0.0);
     jacobi_general(&general, &x_general, &b, iter);
-
     printf("LHS is :\n");
     print_vector(&x_general);
 
@@ -68,20 +66,14 @@ int main(int argc, char **argv)
     printf("====== Gauss Seidel Testing (quick) ======\n");
     
     printf("CSR : \n");
-    fill_vector(&b, 1.0);
-    fill_vector(&x_csr, 3.3);
-    
+    init_constant_vector(&x_csr, 0.0);
     gauss_seidel_csr(&csr, &x_csr, &b, iter);
-
     printf("LHS is :\n");
     print_vector(&x_csr);
 
     printf("General : \n");
-    fill_vector(&b, 1.0);
-    fill_vector(&x_general, 3.3);
-    
+    init_constant_vector(&x_general, 0.0);
     gauss_seidel_general(&general, &x_general, &b, iter);
-
     printf("LHS is :\n");
     print_vector(&x_general);
 

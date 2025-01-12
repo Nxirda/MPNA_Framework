@@ -4,7 +4,6 @@
 
 /* Helper function */
 extern void run_inter_format_test();
-static void print_test_result(u8 boolean, ascii const *function_name);
 
 /**/
 static void test_NNZ_in_general_count();

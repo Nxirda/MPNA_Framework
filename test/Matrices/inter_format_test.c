@@ -1,20 +1,9 @@
 #include "inter_format.h"
 
+#include "test_utils.h"
 #include <stdio.h>
 
 const usz mesh_size = 4;
-
-void print_test_result(u8 boolean, ascii const *function_name)
-{
-    if(boolean)
-    {
-        printf("[O] : Test passed : %s\n", function_name);
-    }
-    else
-    {
-        printf("[X] : Test failed : %s\n", function_name);
-    }
-}
 
 void test_NNZ_in_general_count()
 {

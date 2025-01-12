@@ -1,11 +1,11 @@
 #include "jacobi.h"
 
 #include <assert.h>
-
 void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations)
 {
     assert(matrix && x && b );
 
+#include <stdio.h>
     const usz N = x->size;
 
     vector_t swap_x;
@@ -13,7 +13,7 @@ void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
     
     f64 (*A)[N] = make_2D_span(f64, , matrix->data, N); 
     
-    i8 converged = 0;
+    u8 converged = 0;
     u64 k = 0;
     f64 tmp_a = 0.0;
     f64 tmp_b = 0.0;
@@ -40,6 +40,8 @@ void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
 
             swap_x.data[i] = tmp_a * (tmp_b - tmp_x);    
         } 
+        
+        converged = allclose_vector(x, &swap_x, 1e-08, 1e-05);
         swap_vector(x, &swap_x);
         k ++;
     }
@@ -91,6 +93,7 @@ void jacobi_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
             }
             swap_x.data[i] = tmp_a * (tmp_b - tmp_x);
         }
+        converged = allclose_vector(x, &swap_x, 1e-08, 1e-05);
         swap_vector(x, &swap_x);
         k++;
     }
