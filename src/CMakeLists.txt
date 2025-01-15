@@ -12,6 +12,11 @@ add_library(Source_Lib
     Utils/chrono.c
 )
 
+target_link_libraries(Source_Lib
+    PUBLIC
+    m
+)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 target_include_directories(Source_Lib

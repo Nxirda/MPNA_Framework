@@ -21,4 +21,3 @@ typedef float  f32;
 typedef double f64;
 
 typedef char ascii;
-

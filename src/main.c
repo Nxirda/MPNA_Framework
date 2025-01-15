@@ -15,7 +15,8 @@ int main(int argc, char **argv)
     usz mesh_size = 4;
     u64 nb_bytes = mesh_size * mesh_size;
     u64 iter = 30;
-    
+    f64 tol = 1e-6;
+
     if(argc == 3)
     {
         mesh_size   = strtol(argv[1], NULL, 10);
@@ -40,21 +41,20 @@ int main(int argc, char **argv)
     csr_matrix_t csr;
     allocate_CSR(mesh_size, &csr);
     fill_CSR(mesh_size, &csr);
-    print_CSR(&csr);
+    //print_CSR(&csr);
    
     printf("====== Matrix in general storage format ======\n");
     matrix_t general;
     allocate_matrix(mesh_size, &general);
     fill_matrix(mesh_size, general);
-    print_matrix(general);
+    //print_matrix(general);
     
     printf("====== Matrix in general CSC format ======\n");
     csc_matrix_t csc;
     allocate_CSC(mesh_size, &csc);
     fill_CSC(mesh_size, &csc);
-    print_CSC(&csc);
+    //print_CSC(&csc);
 
-    exit(1);
     init_random_vector(&b, min, max);
 /******************************************************************************/
     printf("====== Jacobi Testing (quick) ======\n");
@@ -62,13 +62,13 @@ int main(int argc, char **argv)
     printf("CSR : \n");
 
     init_constant_vector(&x_csr, 0.0);
-    jacobi_csr(&csr, &x_csr, &b, iter);
+    jacobi_csr(&csr, &x_csr, &b, iter, tol);
     printf("LHS is :\n");
     print_vector(&x_csr);
 
     printf("General : \n");
     init_constant_vector(&x_general, 0.0);
-    jacobi_general(&general, &x_general, &b, iter);
+    jacobi_general(&general, &x_general, &b, iter, tol);
     printf("LHS is :\n");
     print_vector(&x_general);
 
@@ -88,13 +88,13 @@ int main(int argc, char **argv)
     
     printf("CSR : \n");
     init_constant_vector(&x_csr, 0.0);
-    gauss_seidel_csr(&csr, &x_csr, &b, iter);
+    gauss_seidel_csr(&csr, &x_csr, &b, iter, tol);
     printf("LHS is :\n");
     print_vector(&x_csr);
 
     printf("General : \n");
     init_constant_vector(&x_general, 0.0);
-    gauss_seidel_general(&general, &x_general, &b, iter);
+    gauss_seidel_general(&general, &x_general, &b, iter, tol);
     printf("LHS is :\n");
     print_vector(&x_general);
 

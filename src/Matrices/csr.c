@@ -50,8 +50,6 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
     {
         for(usz i = 0; i < mesh_size; i++) 
         {
-           //usz old_Idx = CSR_idx;
-
             //Far left 
             if(j > 0)
             {
