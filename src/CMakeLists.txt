@@ -8,6 +8,7 @@ add_library(Source_Lib
 
     Solvers/jacobi.c
     Solvers/gauss_seidel.c
+    Solvers/conjugate_gradient.c
 
     Utils/chrono.c
 )

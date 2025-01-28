@@ -59,6 +59,18 @@ void init_constant_vector(vector_t *a, f64 value)
     }
 }
 
+void copy_vector(vector_t const *src, vector_t *dest)
+{
+    assert(src != NULL && src->data != NULL);
+    assert(dest != NULL && dest->data != NULL);
+    assert(src->size == dest->size);
+
+    for(usz i = 0; i < src->size; i++)
+    {
+        dest->data[i] = src->data[i];
+    }
+}
+
 void print_vector(vector_t *vector)
 {
     assert(vector != NULL && vector->data != NULL);
@@ -83,6 +95,69 @@ void swap_vector(vector_t *a, vector_t *b)
     f64 *tmp = b->data;
     b->data = a->data;
     a->data = tmp;
+}
+
+
+f64 dot_product(vector_t *a, vector_t *b)
+{
+    const usz N = a->size;
+    f64 sum = 0.0;
+
+    for(usz i = 0; i < N; i++)
+    {
+        sum += a->data[i] * b->data[i];
+    }
+    return sum;
+}
+
+void add_vector(vector_t *a, vector_t *b, vector_t *c)
+{
+    const usz N = a->size;
+
+    for(usz i = 0; i < N; i++)
+    {
+        c->data[i] = a->data[i] + b->data[i];   
+    }
+}
+
+void mul_vector(vector_t *a, vector_t *b, vector_t *c)
+{
+    const usz N = a->size;
+
+    for(usz i = 0; i < N; i++)
+    {
+        c->data[i] = a->data[i] * b->data[i];   
+    }
+}
+
+void add_scalar_vector(f64 scalar, vector_t *a, vector_t *b)
+{
+    const usz N = a->size;
+
+    for(usz i = 0; i < N; i++)
+    {
+        b->data[i] = scalar + a->data[i];   
+    }
+}
+
+void mul_scalar_vector(f64 scalar, vector_t *a, vector_t *b)
+{
+    const usz N = a->size;
+
+    for(usz i = 0; i < N; i++)
+    {
+        b->data[i] = scalar * a->data[i];   
+    }
+}
+
+void daxpy(f64 scalar, vector_t *a, vector_t *b, vector_t *c)
+{
+    const usz N = a->size;
+
+    for(usz i = 0; i < N; i++)
+    {
+        c->data[i] = scalar * a->data[i] + b->data[i];   
+    }
 }
 
 u8 equal_vector(vector_t *a, vector_t *b)

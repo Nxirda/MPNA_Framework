@@ -110,6 +110,34 @@ int main(int argc, char **argv)
 
     printf("\n");
 /******************************************************************************/
+    printf("====== Conjugate gradient Testing (quick) ======\n");
+    
+    printf("CSR : \n");
+    init_constant_vector(&x_csr, 0.0);
+    conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
+    printf("LHS is :\n");
+    print_vector(&x_csr);
+
+    printf("General : \n");
+    init_constant_vector(&x_general, 0.0);
+    conjugate_gradient_general(&general, &x_general, &b, iter, tol);
+    printf("LHS is :\n");
+    print_vector(&x_general);
+
+    u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
+    if(conjugate_gradient_equal)
+    {
+        printf("Conjugate Gradient implementations yields the same result\n");
+    }
+    else
+    {
+        printf("The two implementations yields different results\n");
+    }
+
+    printf("\n");
+/******************************************************************************/
+    
+
 
     free_CSR(&csr);
     free_matrix(general);
