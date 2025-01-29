@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     
     usz mesh_size = 4;
     u64 nb_bytes = mesh_size * mesh_size;
-    u64 iter = 30;
+    u64 iter = 1000;
     f64 tol = 1e-6;
 
     if(argc == 3)
@@ -136,8 +136,6 @@ int main(int argc, char **argv)
 
     printf("\n");
 /******************************************************************************/
-    
-
 
     free_CSR(&csr);
     free_matrix(general);

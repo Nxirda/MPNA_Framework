@@ -71,7 +71,7 @@ void copy_vector(vector_t const *src, vector_t *dest)
     }
 }
 
-void print_vector(vector_t *vector)
+void print_vector(vector_t const *vector)
 {
     assert(vector != NULL && vector->data != NULL);
 
@@ -98,7 +98,7 @@ void swap_vector(vector_t *a, vector_t *b)
 }
 
 
-f64 dot_product(vector_t *a, vector_t *b)
+f64 dot_product(vector_t const*a, vector_t const *b)
 {
     const usz N = a->size;
     f64 sum = 0.0;
@@ -110,7 +110,7 @@ f64 dot_product(vector_t *a, vector_t *b)
     return sum;
 }
 
-void add_vector(vector_t *a, vector_t *b, vector_t *c)
+void add_vector(vector_t const *a, vector_t const *b, vector_t *c)
 {
     const usz N = a->size;
 
@@ -120,7 +120,7 @@ void add_vector(vector_t *a, vector_t *b, vector_t *c)
     }
 }
 
-void mul_vector(vector_t *a, vector_t *b, vector_t *c)
+void mul_vector(vector_t const *a, vector_t const *b, vector_t *c)
 {
     const usz N = a->size;
 
@@ -130,7 +130,7 @@ void mul_vector(vector_t *a, vector_t *b, vector_t *c)
     }
 }
 
-void add_scalar_vector(f64 scalar, vector_t *a, vector_t *b)
+void add_scalar_vector(f64 scalar, vector_t const *a, vector_t *b)
 {
     const usz N = a->size;
 
@@ -140,7 +140,7 @@ void add_scalar_vector(f64 scalar, vector_t *a, vector_t *b)
     }
 }
 
-void mul_scalar_vector(f64 scalar, vector_t *a, vector_t *b)
+void mul_scalar_vector(f64 scalar, vector_t const *a, vector_t *b)
 {
     const usz N = a->size;
 
@@ -150,7 +150,7 @@ void mul_scalar_vector(f64 scalar, vector_t *a, vector_t *b)
     }
 }
 
-void daxpy(f64 scalar, vector_t *a, vector_t *b, vector_t *c)
+void daxpy(f64 scalar, vector_t const *a, vector_t const *b, vector_t *c)
 {
     const usz N = a->size;
 
@@ -160,7 +160,7 @@ void daxpy(f64 scalar, vector_t *a, vector_t *b, vector_t *c)
     }
 }
 
-u8 equal_vector(vector_t *a, vector_t *b)
+u8 equal_vector(vector_t const *a, vector_t const *b)
 {
     assert(a && b);
     if(a->size != b->size)
@@ -180,7 +180,7 @@ u8 equal_vector(vector_t *a, vector_t *b)
 }
 
 // https://numpy.org/doc/stable/reference/generated/numpy.allclose.html
-u8 allclose_vector(vector_t *a, vector_t *b, f64 atol, f64 rtol)
+u8 allclose_vector(vector_t const *a, vector_t const *b, f64 atol, f64 rtol)
 {
     assert(a && b);
 

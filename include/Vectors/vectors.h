@@ -17,24 +17,24 @@ extern void allocate_vector(vector_t *vector, usz size);
 
 // Intializations functions
 extern void init_iota_vector(vector_t *vector, f64 begin);
-extern void init_random_vector(vector_t *a, f64 min, f64 max);
-extern void init_constant_vector(vector_t *a, f64 value);
+extern void init_random_vector(vector_t *vector, f64 min, f64 max);
+extern void init_constant_vector(vector_t *vector, f64 value);
 
 // Utilities functions
-extern void copy_vector(vector_t const*src, vector_t *dest);
-extern void print_vector(vector_t *vector);
+extern void copy_vector(vector_t const *src, vector_t *dest);
+extern void print_vector(vector_t const *vector);
 extern void free_vector(vector_t *vector);
 extern void swap_vector(vector_t *a, vector_t *b);
 
 // Maths functions
-extern f64 dot_product(vector_t *a, vector_t *b);
-extern void add_vector(vector_t *a, vector_t *b, vector_t *c);
-extern void mul_vector(vector_t *a, vector_t *b, vector_t *c);
+extern f64 dot_product(vector_t const *a, vector_t const *b);
+extern void add_vector(vector_t const *a, vector_t const *b, vector_t *dest);
+extern void mul_vector(vector_t const *a, vector_t const *b, vector_t *dest);
 
 // Scalar x vector operations
-extern void add_scalar_vector(f64 scalar, vector_t *b, vector_t *c);
-extern void mul_scalar_vector(f64 scalar, vector_t *b, vector_t *c);
-extern void daxpy(f64 scalar, vector_t *a, vector_t *b, vector_t *c);
+extern void add_scalar_vector(f64 scalar, vector_t const *b, vector_t *dest);
+extern void mul_scalar_vector(f64 scalar, vector_t const *b, vector_t *dest);
+extern void daxpy(f64 scalar, vector_t const *a, vector_t const *b, vector_t *dest);
 
-extern u8 equal_vector(vector_t *a, vector_t *b);
-extern u8 allclose_vector(vector_t *a, vector_t *b, f64 atol, f64 rtol);
+extern u8 equal_vector(vector_t const *a, vector_t const *b);
+extern u8 allclose_vector(vector_t const *a, vector_t const *b, f64 atol, f64 rtol);
