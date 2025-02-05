@@ -1,7 +1,6 @@
 #include "conjugate_gradient.h"
 #include <math.h>
 
-#include <stdio.h>
 //
 void compute_residual_general(matrix_t const *matrix, vector_t const *x, vector_t const *b, vector_t *r)
 {

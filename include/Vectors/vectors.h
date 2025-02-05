@@ -26,12 +26,17 @@ extern void print_vector(vector_t const *vector);
 extern void free_vector(vector_t *vector);
 extern void swap_vector(vector_t *a, vector_t *b);
 
-// Maths functions
+// Maths functions (Equivalent to BLAS 1 operations)
 extern f64 dot_product(vector_t const *a, vector_t const *b);
+extern f64 dot_product_conjugate(vector_t const *a, vector_t const *b);
+extern f64 norm_one_vector();
+extern f64 norm_two_vector();
+
+extern void rotate_vector();
+// See rot, rotg, rotm, rotmg 
 extern void add_vector(vector_t const *a, vector_t const *b, vector_t *dest);
 extern void mul_vector(vector_t const *a, vector_t const *b, vector_t *dest);
 
-// Scalar x vector operations
 extern void add_scalar_vector(f64 scalar, vector_t const *b, vector_t *dest);
 extern void mul_scalar_vector(f64 scalar, vector_t const *b, vector_t *dest);
 extern void daxpy(f64 scalar, vector_t const *a, vector_t const *b, vector_t *dest);
