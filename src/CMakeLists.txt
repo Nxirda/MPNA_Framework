@@ -11,7 +11,7 @@ add_library(Source_Lib
     Algorithms/Solvers/jacobi.c
     Algorithms/Solvers/gauss_seidel.c
     Algorithms/Solvers/conjugate_gradient.c
-    #Solvers/GMRES.c
+    Algorithms/Solvers/GMRES.c
 
     Utils/chrono.c
 )

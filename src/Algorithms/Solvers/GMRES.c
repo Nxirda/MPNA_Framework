@@ -1,8 +1,8 @@
 #include "GMRES.h"
 
 #include <math.h>
-/*
-void compute_residual_general(matrix_t const *matrix, vector_t const *x, vector_t const *b, vector_t *r)
+
+void compute_residual_general_2(matrix_t const *matrix, vector_t const *x, vector_t const *b, vector_t *r)
 {
     const usz N = x->size;
     f64 (*A)[N] = make_2D_span(f64, , matrix->data, N);
@@ -19,11 +19,11 @@ void compute_residual_general(matrix_t const *matrix, vector_t const *x, vector_
         
         r->data[i] = b_i - r_i;
     }
-}*/
+}
 
-inline void arnoldi(matrix_t const *mat_A, matrix_t *mat_Q, matrix_t *mat_H, u64 lim_k)
+void arnoldi(matrix_t const *mat_A, matrix_t *mat_Q, matrix_t *mat_H, u64 lim_k)
 {
-    f64 (*A)[mat_A->size]   = make_2D_span(f64, , mat_A->data, mat_A->size);
+    f64 (*A)[mat_A->dim_y]   = make_2D_span(f64, , mat_A->data, mat_A->dim_y);
     // Would help tbh if those were matrices of vectors
     f64 (*H)[mat_H->dim_y]  = make_2D_span(f64, , mat_H->data, mat_H->dim_y);
     f64 (*Q)[mat_Q->dim_y]  = make_2D_span(f64, , mat_Q->data, mat_Q->dim_y);
@@ -82,17 +82,17 @@ void GMRES_general(matrix_t const *matrix, vector_t *x,
     //f64 (*A)[N] = make_2D_span(f64, , matrix->data, N);        
 
     matrix_t Q;
-    allocate_rectangle_matrix(b->size, N+1, Q);
-    f64 (*Q_span)[N+1] = make_2D_span(f64, ,Q->data, N+1);
+    allocate_matrix(b->size, N+1, &Q);
+    f64 (*Q_span)[N+1] = make_2D_span(f64, ,Q.data, N+1);
 
 
     matrix_t H;
-    allocate_rectangle_matrix(N+1, N, H);
-    fill_matrix(0, H.size);
+    allocate_matrix(N+1, N, &H);
+    //fill_matrix(0, H.size);
 
     vector_t residual;
     allocate_vector(&residual, N);
-    compute_residual_general(matrix, x, b, &residual);
+    compute_residual_general_2(matrix, x, b, &residual);
     
     u64 norm_r = dot_product(&residual, &residual);
     
@@ -104,7 +104,7 @@ void GMRES_general(matrix_t const *matrix, vector_t *x,
     usz k = 0;
     while((k < max_iterations))// && (error < tol))
     {
-        arnoldi(matrix, &Q, &H, lim_k);
+        arnoldi(matrix, &Q, &H, k);
         // Update residual
         k++;
     }

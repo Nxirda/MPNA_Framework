@@ -141,17 +141,17 @@ int framework_test(int argc, char **argv)
 /******************************************************************************/
     printf("====== GMRES Testing (quick) ======\n");
     
-    /*printf("CSR : \n");
+    printf("CSR : \n");
     init_constant_vector(&x_csr, 0.0);
     conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
     printf("LHS is :\n");
-    print_vector(&x_csr);*/
+    print_vector(&x_csr);
 
-    /*printf("General : \n");
+    printf("General : \n");
     init_constant_vector(&x_general, 0.0);
     GMRES_general(&general, &x_general, &b, iter, tol);
     printf("LHS is :\n");
-    print_vector(&x_general);*/
+    print_vector(&x_general);
 
     /*u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
     if(conjugate_gradient_equal)
