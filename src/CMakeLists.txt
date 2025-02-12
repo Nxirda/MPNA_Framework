@@ -4,11 +4,14 @@ add_library(Source_Lib
     Matrices/general.c 
     Matrices/csr.c
     Matrices/csc.c
-    Matrices/inter_format.c
+    #Matrices/inter_format.c
+    
+    Fillers/poisson_laplacian_2D.c
 
-    Solvers/jacobi.c
-    Solvers/gauss_seidel.c
-    Solvers/conjugate_gradient.c
+    Algorithms/Solvers/jacobi.c
+    Algorithms/Solvers/gauss_seidel.c
+    Algorithms/Solvers/conjugate_gradient.c
+    #Solvers/GMRES.c
 
     Utils/chrono.c
 )
@@ -22,8 +25,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 target_include_directories(Source_Lib
     PUBLIC
-    ${CMAKE_SOURCE_DIR}/include/Matrices
     ${CMAKE_SOURCE_DIR}/include/Vectors
-    ${CMAKE_SOURCE_DIR}/include/Solvers
+    ${CMAKE_SOURCE_DIR}/include/Matrices
+    ${CMAKE_SOURCE_DIR}/include/Fillers
+    ${CMAKE_SOURCE_DIR}/include/Algorithms
+    ${CMAKE_SOURCE_DIR}/include/Algorithms/Solvers
     ${CMAKE_SOURCE_DIR}/include/Utils
 )

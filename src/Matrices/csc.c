@@ -4,21 +4,21 @@
 
 #include "csc.h"
 
-usz count_NNZ_elements_2(usz mesh_size, usz matrix_size)
+/*usz count_NNZ_elements_2(usz mesh_size, usz matrix_size)
 {
     assert(mesh_size > 0 && matrix_size > 0);
 
     const usz other_diagonal_size = matrix_size - mesh_size; 
     return matrix_size + 4 * other_diagonal_size; 
 }
-
-void allocate_CSC(usz mesh_size, csc_matrix_t *matrix)
+*/
+/*void allocate_CSC(usz mesh_size, csc_matrix_t *matrix)
 {
     assert(matrix != NULL && mesh_size > 0);
 
     const usz N = mesh_size * mesh_size;
     const usz NNZ = count_NNZ_elements_2(mesh_size, N);
-
+    
     matrix->size = N;
     matrix->data        = (f64 *)malloc(NNZ * sizeof(f64));
     matrix->row_index   = (usz *)malloc(NNZ    * sizeof(usz));
@@ -30,12 +30,23 @@ void allocate_CSC(usz mesh_size, csc_matrix_t *matrix)
     //usz total = bytes_data + bytes_col + bytes_row;
     //printf("Allocated size : %ld, %ld, %ld, total : %ld\n", 
     //        bytes_data, bytes_col, bytes_row, total);
+}*/
+
+void allocate_CSC(usz dim_x, usz dim_y, usz NNZ, csc_matrix_t *matrix)
+{
+    const usz N = dim_x * dim_y;
+    matrix->size = N;
+
+    matrix->data = (f64 *)malloc(NNZ * sizeof(f64));
+    matrix->col_index = (usz *)malloc((dim_y+1) * sizeof(usz));
+    matrix->row_index = (usz *)malloc(NNZ * sizeof(usz));
 }
 
 /*
  * Starting from a mesh of size N by N 
  * Returns the CSC representation as a N^2 * N^2 matrix
  * */
+/*
 void fill_CSC(usz mesh_size, csc_matrix_t *matrix)
 {
     assert(matrix != NULL && mesh_size > 0);
@@ -94,7 +105,7 @@ void fill_CSC(usz mesh_size, csc_matrix_t *matrix)
         }
     }
 }
-
+*/
 void print_CSC(csc_matrix_t *matrix)
 {
     assert(matrix->data != NULL);

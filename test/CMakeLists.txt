@@ -1,7 +1,7 @@
 add_Library(
     Test_lib
 
-    Matrices/inter_format_test.c
+    #Matrices/inter_format_test.c
     Vectors/vector_test.c
     test_utils.c 
 )

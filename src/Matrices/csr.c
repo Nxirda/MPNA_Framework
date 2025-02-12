@@ -4,15 +4,29 @@
 
 #include "csr.h"
 
-usz count_NNZ_elements(usz mesh_size, usz matrix_size)
+/*usz count_NNZ_elements(usz mesh_size, usz matrix_size)
 {
     assert(mesh_size > 0 && matrix_size > 0);
 
     const usz other_diagonal_size = matrix_size - mesh_size; 
     return matrix_size + 4 * other_diagonal_size; 
 }
+*/
 
-void allocate_CSR(usz mesh_size, csr_matrix_t *matrix)
+void allocate_CSR(usz dim_x, usz dim_y, usz NNZ, csr_matrix_t *matrix)
+{
+    const usz N = dim_x * dim_y;
+    matrix->size = N;
+
+    matrix->dim_x = dim_x;
+    matrix->dim_y = dim_y;
+
+    matrix->data        = (f64 *)malloc(NNZ * sizeof(f64));
+    matrix->col_index   = (usz *)malloc(NNZ * sizeof(usz));
+    matrix->row_index   = (usz *)malloc((dim_y+1) * sizeof(usz));
+}
+
+/*void allocate_CSR(usz mesh_size, csr_matrix_t *matrix)
 {
     assert(matrix != NULL && mesh_size > 0);
 
@@ -30,13 +44,13 @@ void allocate_CSR(usz mesh_size, csr_matrix_t *matrix)
     //usz total = bytes_data + bytes_col + bytes_row;
     //printf("Allocated size : %ld, %ld, %ld, total : %ld\n", 
     //        bytes_data, bytes_col, bytes_row, total);
-}
+}*/
 
 /*
  * Starting from a mesh of size N by N 
  * Returns the CSR representation as a N^2 * N^2 matrix
  * */
-void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
+/*void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
 {
     assert(matrix != NULL && mesh_size > 0);
 
@@ -93,7 +107,7 @@ void fill_CSR(usz mesh_size, csr_matrix_t *matrix)
             row_idx ++;
         }
     }
-}
+}*/
 
 void print_CSR(csr_matrix_t *matrix)
 {
@@ -101,11 +115,11 @@ void print_CSR(csr_matrix_t *matrix)
  
     usz idx = 0;
 
-    for(usz i = 0; i < matrix->size; i++)
+    for(usz i = 0; i < matrix->dim_x; i++)
     {
         usz elems_in_row = matrix->row_index[i+1] - matrix->row_index[i]; 
         
-        for(usz j = 0; j < matrix->size; j++)
+        for(usz j = 0; j < matrix->dim_y; j++)
         {
             if(elems_in_row > 0 && matrix->col_index[idx] == j)
             {
@@ -132,3 +146,24 @@ void free_CSR(csr_matrix_t *matrix)
     free(matrix->row_index);
     free(matrix->data);
 }
+
+//
+
+/*void gemv_CSR(csr_matrix_t const *matrix, vector_t const *input, vector_t *output)
+{
+    const usz N = input->size;
+    usz curr_col = 0;
+    f64 memo = 0.0;
+    for(usz i = 0; i < N; i++)
+    {
+        memo = 0.0;
+        //output->data[i] = 0;
+        for(usz j = matrix->row_index[i]; j < matrix->row_index[i+1]; j++)
+        {
+            curr_col = matrix->col_index[j];
+            
+            memo += matrix->data[j] * input->data[curr_col];
+        }
+        output->data[i] = memo;
+    }
+}*/

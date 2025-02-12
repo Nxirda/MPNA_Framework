@@ -5,7 +5,7 @@
 void compute_residual_general(matrix_t const *matrix, vector_t const *x, vector_t const *b, vector_t *r)
 {
     const usz N = x->size;
-    f64 (*A)[N] = make_2D_span(f64, , matrix->data, N);
+    f64 (*A)[matrix->dim_y] = make_2D_span(f64, , matrix->data, matrix->dim_y);
 
     for(usz i = 0; i < N; i++)
     {
@@ -27,7 +27,7 @@ void conjugate_gradient_general(matrix_t const *matrix, vector_t *x,
 {
     u64 k = 0;
     const usz N = x->size;
-    f64 (*A)[N] = make_2D_span(f64, , matrix->data, N);
+    f64 (*A)[matrix->dim_y] = make_2D_span(f64, , matrix->data, matrix->dim_y);
 
     vector_t residual;
     allocate_vector(&residual, N);

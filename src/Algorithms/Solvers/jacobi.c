@@ -10,7 +10,7 @@ void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
     vector_t swap_x;
     allocate_vector(&swap_x, N);
     
-    f64 (*A)[N] = make_2D_span(f64, , matrix->data, N); 
+    f64 (*A)[matrix->dim_y] = make_2D_span(f64, , matrix->data, matrix->dim_y); 
     
     u8 converged = 0;
     u64 k = 0;

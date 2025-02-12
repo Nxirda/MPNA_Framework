@@ -30,5 +30,7 @@ https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html
 https://en.wikipedia.org/wiki/Sparse_matrix
 http://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf
 https://fr.wikipedia.org/wiki/Diff%C3%A9rence_finie
-https://en.wikipedia.org/wiki/Generalized_minimal_residual_method
 https://en.wikipedia.org/wiki/Conjugate_gradient_method
+https://en.wikipedia.org/wiki/Generalized_minimal_residual_method
+https://en.wikipedia.org/wiki/Arnoldi_iteration
+https://en.wikipedia.org/wiki/Hessenberg_matrix

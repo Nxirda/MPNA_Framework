@@ -24,7 +24,7 @@ void gauss_seidel_general(matrix_t const *matrix, vector_t *x, vector_t const *b
     assert(matrix && x && b );
 
     const usz N = x->size;
-    f64 (*A)[N] = make_2D_span(f64, , matrix->data, N); 
+    f64 (*A)[matrix->dim_y] = make_2D_span(f64, , matrix->data, matrix->dim_y); 
     
     i8 converged = 0;
     u64 k = 0; 

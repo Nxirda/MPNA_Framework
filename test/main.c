@@ -4,6 +4,6 @@
 int main()
 {
     run_vector_test();
-    run_inter_format_test();
+    //run_inter_format_test();
     return 0;
 }
