@@ -110,8 +110,57 @@ void GMRES_general(matrix_t const *matrix, vector_t *x,
     }
 }
 
-/*void GMRES_csr(csr_matrix_t const *matrix, vector_t *x, 
+
+//
+void compute_residual_csr_2(const csr_matrix_t *matrix, const vector_t *x, const vector_t *b, vector_t *r)
+{
+    const usz N = x->size;
+    
+    for(usz i = 0; i < N; i++)
+    {
+        f64 r_i = 0.0; 
+        f64 b_i = b->data[i];
+
+        for(usz j = matrix->row_index[i]; j < matrix->row_index[i+1]; j++)
+        {
+            r_i += matrix->data[j] * x->data[matrix->col_index[j]];
+        }
+        
+        r->data[i] = b_i - r_i;
+    }
+}
+
+void GMRES_csr(csr_matrix_t const *matrix, vector_t *x, 
                         vector_t const *b, u64 max_iterations, f64 tol)
 {
-    return;
-}*/
+    const usz N = x->size;
+    //f64 (*A)[N] = make_2D_span(f64, , matrix->data, N);        
+
+    matrix_t Q;
+    allocate_matrix(b->size, N+1, &Q);
+    f64 (*Q_span)[N+1] = make_2D_span(f64, ,Q.data, N+1);
+
+
+    matrix_t H;
+    allocate_matrix(N+1, N, &H);
+    //fill_matrix(0, H.size);
+
+    vector_t residual;
+    allocate_vector(&residual, N);
+    compute_residual_csr_2(matrix, x, b, &residual);
+    
+    u64 norm_r = dot_product(&residual, &residual);
+    
+    for(usz j = 0; j < Q.dim_x; j++)
+    {
+        Q_span[j][0] = residual.data[j] / norm_r;
+    }
+
+    usz k = 0;
+    while((k < max_iterations))// && (error < tol))
+    {
+        //arnoldi(matrix, &Q, &H, k);
+        // Update residual
+        k++;
+    }
+}

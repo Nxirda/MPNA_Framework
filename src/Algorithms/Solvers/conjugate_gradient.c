@@ -22,7 +22,7 @@ void compute_residual_general(matrix_t const *matrix, vector_t const *x, vector_
 }
 
 //
-void conjugate_gradient_general(matrix_t const *matrix, vector_t *x, 
+usz conjugate_gradient_general(matrix_t const *matrix, vector_t *x, 
                 vector_t const *b, u64 max_iterations, f64 tol)
 {
     u64 k = 0;
@@ -81,6 +81,7 @@ void conjugate_gradient_general(matrix_t const *matrix, vector_t *x,
         daxpy(beta, &direction, &residual, &direction);
         k ++;
     }
+    return k;
 }
 
 //
@@ -103,7 +104,7 @@ void compute_residual_csr(const csr_matrix_t *matrix, const vector_t *x, const v
 }
 
 //
-void conjugate_gradient_csr(csr_matrix_t const *matrix, vector_t *x, 
+usz conjugate_gradient_csr(csr_matrix_t const *matrix, vector_t *x, 
             vector_t const *b, u64 max_iterations, f64 tol)
 {
     u64 k = 0;
@@ -161,4 +162,5 @@ void conjugate_gradient_csr(csr_matrix_t const *matrix, vector_t *x,
         daxpy(beta, &direction, &residual, &direction);
         k ++;
     }
+    return k;
 }

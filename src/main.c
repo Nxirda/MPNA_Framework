@@ -15,6 +15,7 @@ int framework_test(int argc, char **argv)
     
     usz mesh_size = 4;
     u64 nb_bytes = mesh_size * mesh_size;
+
     u64 iter = 1000;
     f64 tol = 1e-6;
 
@@ -26,8 +27,8 @@ int framework_test(int argc, char **argv)
     }
 
     /* Random target params */
-    f64 min = 10e-12;
-    f64 max = 10e12;
+    f64 min = 10e-6;
+    f64 max = 10e6;
 
     vector_t b;
     allocate_vector(&b, nb_bytes);
@@ -38,14 +39,14 @@ int framework_test(int argc, char **argv)
     vector_t x_csr;
     allocate_vector(&x_csr, nb_bytes);
 
-    printf("====== Matrix in CSR storage format ======\n");
+    //printf("====== Matrix in CSR storage format ======\n");
     csr_matrix_t csr;
     poisson_CSR(mesh_size, &csr);
     //allocate_CSR(mesh_size, &csr);
     //fill_CSR(mesh_size, &csr);
     //print_CSR(&csr);
    
-    printf("====== Matrix in general storage format ======\n");
+    //printf("====== Matrix in general storage format ======\n");
     matrix_t general;
     poisson_general(mesh_size, &general); 
     //allocate_matrix(mesh_size, &general);
@@ -60,86 +61,78 @@ int framework_test(int argc, char **argv)
 
     init_random_vector(&b, min, max);
 /******************************************************************************/
-    printf("====== Jacobi Testing (quick) ======\n");
-    
-    printf("CSR : \n");
-
-    init_constant_vector(&x_csr, 0.0);
-    jacobi_csr(&csr, &x_csr, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_csr);
-
-    printf("General : \n");
-    init_constant_vector(&x_general, 0.0);
-    jacobi_general(&general, &x_general, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_general);
-
-    u8 jacobi_equal = equal_vector(&x_general, &x_csr); 
-    if(jacobi_equal)
     {
-        printf("Jacobi implementations yields the same result\n");
-    }
-    else
-    {
-        printf("The two implementations yields different results\n");
-    }
+        printf("====== Jacobi Testing (quick) ======\n");
+        
+        init_constant_vector(&x_csr, 0.0);
+        usz jc_iter = jacobi_csr(&csr, &x_csr, &b, iter, tol);
 
-    printf("\n");
+        init_constant_vector(&x_general, 0.0);
+        usz jg_iter = jacobi_general(&general, &x_general, &b, iter, tol);
+
+        u8 jacobi_equal = equal_vector(&x_general, &x_csr); 
+        if(jacobi_equal)
+            printf("Jacobi implementations yields the same result\n");
+        else
+            printf("The two implementations yields different results\n");
+        
+        printf("General iterations : %ld\n", jg_iter);
+        printf("Csr iterations     : %ld\n", jc_iter);
+        printf("\n");
+    }
 /******************************************************************************/
-    printf("====== Gauss Seidel Testing (quick) ======\n");
-    
-    printf("CSR : \n");
-    init_constant_vector(&x_csr, 0.0);
-    gauss_seidel_csr(&csr, &x_csr, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_csr);
-
-    printf("General : \n");
-    init_constant_vector(&x_general, 0.0);
-    gauss_seidel_general(&general, &x_general, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_general);
-
-    u8 gauss_seidel_equal = equal_vector(&x_general, &x_csr); 
-    if(jacobi_equal)
     {
-        printf("Gauss Seidel implementations yields the same result\n");
-    }
-    else
-    {
-        printf("The two implementations yields different results\n");
-    }
+        printf("====== Gauss Seidel Testing (quick) ======\n");
+        
+        init_constant_vector(&x_csr, 0.0);
+        init_constant_vector(&x_general, 0.0);
 
-    printf("\n");
+        usz gsc_iter = gauss_seidel_csr(&csr, &x_csr, &b, iter, tol);
+        usz gsg_iter = gauss_seidel_general(&general, &x_general, &b, iter, tol);
+
+        u8 gauss_seidel_equal = equal_vector(&x_general, &x_csr); 
+       
+        if(gauss_seidel_equal)
+            printf("Gauss Seidel implementations yields the same result\n");
+        else
+            printf("The two implementations yields different results\n");
+        
+        printf("General iterations : %ld\n", gsg_iter);
+        printf("Csr iterations     : %ld\n", gsc_iter);
+        printf("\n");
+    }
 /******************************************************************************/
-    printf("====== Conjugate gradient Testing (quick) ======\n");
-    
-    printf("CSR : \n");
-    init_constant_vector(&x_csr, 0.0);
-    conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_csr);
-
-    printf("General : \n");
-    init_constant_vector(&x_general, 0.0);
-    conjugate_gradient_general(&general, &x_general, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_general);
-
-    u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
-    if(conjugate_gradient_equal)
     {
-        printf("Conjugate Gradient implementations yields the same result\n");
-    }
-    else
-    {
-        printf("The two implementations yields different results\n");
-    }
+        printf("====== Conjugate gradient Testing (quick) ======\n");
+        
+        //printf("CSR : \n");
+        init_constant_vector(&x_csr, 0.0);
+        usz cjc_iter = conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
+        //printf("LHS is :\n");
+        //print_vector(&x_csr);
 
-    printf("\n");
+        //printf("General : \n");
+        init_constant_vector(&x_general, 0.0);
+        usz cjg_iter = conjugate_gradient_general(&general, &x_general, &b, iter, tol);
+        //printf("LHS is :\n");
+        //print_vector(&x_general);
+
+        u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
+        if(conjugate_gradient_equal)
+        {
+            printf("Conjugate Gradient implementations yields the same result\n");
+        }
+        else
+        {
+            printf("The two implementations yields different results\n");
+        }
+ 
+        printf("General iterations : %ld\n", cjg_iter);
+        printf("Csr iterations     : %ld\n", cjc_iter);
+        printf("\n");
+    }
 /******************************************************************************/
-    printf("====== GMRES Testing (quick) ======\n");
+    /*printf("====== GMRES Testing (quick) ======\n");
     
     printf("CSR : \n");
     init_constant_vector(&x_csr, 0.0);
@@ -152,7 +145,7 @@ int framework_test(int argc, char **argv)
     GMRES_general(&general, &x_general, &b, iter, tol);
     printf("LHS is :\n");
     print_vector(&x_general);
-
+*/
     /*u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
     if(conjugate_gradient_equal)
     {

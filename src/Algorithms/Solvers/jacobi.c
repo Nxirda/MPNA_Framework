@@ -1,7 +1,8 @@
 #include "jacobi.h"
 #include <math.h>
 #include <assert.h>
-void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations, f64 tol)
+
+usz jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations, f64 tol)
 {
     assert(matrix && x && b );
 
@@ -12,32 +13,29 @@ void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
     
     f64 (*A)[matrix->dim_y] = make_2D_span(f64, , matrix->data, matrix->dim_y); 
     
-    u8 converged = 0;
-    u64 k = 0;
-    f64 tmp_a = 0.0;
-    f64 tmp_b = 0.0;
-    f64 tmp_x = 0.0;
-    f64 norm  = 0.0;
-    while(!converged && k < max_iterations)
+    u64 k       = 0;
+    f64 diag    = 0.0;
+    f64 sum     = 0.0;
+    f64 norm    = 0.0;
+    while(k < max_iterations)
     {
         for(usz i = 0; i < N; i++)
         {
-            tmp_x = 0.0;
-            tmp_b = b->data[i];
-            tmp_a = 1.0/A[i][i];
+            sum = 0.0;
+            diag = A[i][i];
            
             // Distinct loops instead of ifs : basic stuff
             for(usz j = 0; j < i; j++)
             {
-                tmp_x += A[i][j] * x->data[j];
+                sum += A[i][j] * x->data[j];
             }
 
             for(usz j = i+1; j < N;  j++)
             {
-                tmp_x += A[i][j] * x->data[j];
+                sum += A[i][j] * x->data[j];
             }
 
-            swap_x.data[i] = tmp_a * (tmp_b - tmp_x);    
+            swap_x.data[i] = (b->data[i] - sum) * (1.0/diag);    
         } 
         norm = 0.0;
         for(usz i = 0; i < N; i++)
@@ -48,58 +46,50 @@ void jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
 
         if(norm < tol)
         {
-            converged = 1;
+            free_vector(&swap_x);
+            return k;
         }
         swap_vector(x, &swap_x);
         k ++;
     }
     free_vector(&swap_x);
+    return max_iterations;
 }
 
-void jacobi_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations, f64 tol)
+usz jacobi_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 max_iterations, f64 tol)
 {
     const usz N = x->size;
-    i8 converged = 0;
 
     vector_t swap_x;
     allocate_vector(&swap_x, N);
     
-    u64 k           = 0;
-    usz idx         = 0;
-    usz nb_elems    = 0;
+    usz k           = 0;
     usz curr_col    = 0;
 
-    f64 tmp_a   = 0.0;
-    f64 tmp_b   = 0.0;
-    f64 tmp_x   = 0.0;
-    f64 Aij     = 0.0;
+    f64 diag    = 0.0;
+    f64 sum     = 0.0;
     f64 norm    = 0.0;
-    while(!converged && k < max_iterations)
+    while(k < max_iterations)
     {
-        idx = 0;
-
         for(usz i = 0; i < N; i++)
         {
-            tmp_a = 0.0;
-            tmp_b = b->data[i];
-            tmp_x = 0.0; 
-            nb_elems = matrix->row_index[i+1] - matrix->row_index[i];
+            diag = 0.0;
+            sum = 0.0; 
             
-            for(usz j = 0; j < nb_elems; j++, idx++)
+            for(usz j = matrix->row_index[i]; j < matrix->row_index[i+1]; j++)
             {
-                curr_col = matrix->col_index[idx];
-                Aij = matrix->data[idx];
+                curr_col = matrix->col_index[j];
                 
                 if(curr_col != i)
                 {
-                    tmp_x += Aij * x->data[curr_col];
+                    sum += matrix->data[j] * x->data[curr_col];
                 }
                 else
                 {
-                    tmp_a = 1.0/Aij;
+                    diag = matrix->data[j];
                 }
             }
-            swap_x.data[i] = tmp_a * (tmp_b - tmp_x);
+            swap_x.data[i] = (b->data[i] - sum) * (1.0/diag);
         }
 
         norm = 0.0;
@@ -111,11 +101,12 @@ void jacobi_csr(csr_matrix_t const *matrix, vector_t *x, vector_t const *b, u64 
 
         if(norm < tol)
         {
-            converged = 1;
+            free_vector(&swap_x);
+            return k;
         }
-        //converged = allclose_vector(x, &swap_x, 1e-08, 1e-05);
         swap_vector(x, &swap_x);
         k++;
     }
     free_vector(&swap_x);
+    return max_iterations;
 }
