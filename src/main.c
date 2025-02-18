@@ -41,10 +41,13 @@ int framework_test(int argc, char **argv)
 
     csr_matrix_t csr;
     poisson_CSR(mesh_size, &csr);
-   
+    //print_CSR(&csr); 
+    
+    
     matrix_t general;
     poisson_general(mesh_size, &general); 
     
+    //print_matrix(general);
     /*printf("====== Matrix in general CSC format ======\n");
     csc_matrix_t csc;
     allocate_CSC(mesh_size, &csc);

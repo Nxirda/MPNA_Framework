@@ -1,3 +1,4 @@
+#include <string.h>
 #include "assert.h"
 
 #include "poisson_laplacian_2D.h"
@@ -84,6 +85,8 @@ void poisson_general(usz mesh_size, matrix_t *matrix)
     assert(matrix != NULL && mesh_size > 0);
     const usz N = mesh_size * mesh_size;
     allocate_matrix(N, N, matrix);
+    
+    fill_matrix(matrix, 0.0);
 
     f64 (* span)[matrix->dim_y] = make_2D_span(f64, ,matrix->data, matrix->dim_y);
     

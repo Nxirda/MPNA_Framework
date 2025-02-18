@@ -81,6 +81,10 @@ usz conjugate_gradient_general(matrix_t const *matrix, vector_t *x,
         daxpy(beta, &direction, &residual, &direction);
         k ++;
     }
+
+    free_vector(&q);
+    free_vector(&residual);
+    free_vector(&direction);
     return k;
 }
 
@@ -162,5 +166,9 @@ usz conjugate_gradient_csr(csr_matrix_t const *matrix, vector_t *x,
         daxpy(beta, &direction, &residual, &direction);
         k ++;
     }
+
+    free_vector(&q);
+    free_vector(&residual);
+    free_vector(&direction);
     return k;
 }

@@ -10,6 +10,7 @@ usz jacobi_general(matrix_t const *matrix, vector_t *x, vector_t const *b, u64 m
 
     vector_t swap_x;
     allocate_vector(&swap_x, N);
+    init_constant_vector(&swap_x, 0.0);
     
     f64 (*A)[matrix->dim_y] = make_2D_span(f64, , matrix->data, matrix->dim_y); 
     

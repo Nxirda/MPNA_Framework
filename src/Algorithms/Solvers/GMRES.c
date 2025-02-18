@@ -2,7 +2,6 @@
 #include "linear_algebra.h"
 #include <lapacke.h>
 #include <math.h>
-#include <string.h>
 
 /*
  * S/o to this guy that is an absolute unit, basically every thing you need
@@ -142,9 +141,11 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
 
     matrix_t Q;
     allocate_matrix(N, size+1, &Q);
+    fill_matrix(&Q, 0.0);
 
     matrix_t H;
     allocate_matrix(size+1, size, &H);
+    fill_matrix(&H, 0.0);
 
     vector_t residual;
     allocate_vector(&residual, N);
@@ -188,7 +189,6 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
         g.data[0] = beta;
 
        f64 *H_1d = (f64 *)malloc((size+1)*k * sizeof(f64));
-       memset(H_1d, 0.0, (size+1)*k);
 
         for (int i = 0; i < size+1; ++i) {
             for (int j = 0; j < k; ++j) {
@@ -197,6 +197,8 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
         }
 
         LAPACKE_dgels(LAPACK_COL_MAJOR, 'N', size+1, k, 1, H_1d, size+1, g.data, size+1);
+        
+        free(H_1d);
 
         copy_vector(&g, &y);
         
@@ -331,9 +333,11 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
 
     matrix_t Q;
     allocate_matrix(N, size+1, &Q);
+    fill_matrix(&Q, 0.0);
 
     matrix_t H;
     allocate_matrix(size+1, size, &H);
+    fill_matrix(&H, 0.0);
 
     vector_t residual;
     allocate_vector(&residual, N);
@@ -369,7 +373,6 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
         g.data[0] = beta;
 
        f64 *H_1d = (f64 *)malloc((size+1)*k * sizeof(f64));
-       memset(H_1d, 0.0, (size+1)*k);
 
         for (int i = 0; i < size+1; ++i) {
             for (int j = 0; j < k; ++j) {
@@ -378,6 +381,8 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
         }
 
         LAPACKE_dgels(LAPACK_COL_MAJOR, 'N', size+1, k, 1, H_1d, size+1, g.data, size+1);
+        
+        free(H_1d);
 
         copy_vector(&g, &y);
         

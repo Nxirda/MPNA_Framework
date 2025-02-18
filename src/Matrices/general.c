@@ -30,6 +30,21 @@ void allocate_matrix(usz size_x, usz size_y, matrix_t *matrix)
     matrix->data = (f64 *)malloc(N * sizeof(f64));
 }
 
+void fill_matrix(matrix_t *matrix, f64 value)
+{
+    assert(matrix->data != NULL);
+    
+    f64(* span)[matrix->dim_y] = make_2D_span(f64, ,matrix->data, matrix->dim_y);
+
+    for(usz i = 0; i < matrix->dim_x; i++)
+    {
+        for(usz j = 0; j < matrix->dim_y; j++)
+        {
+            span[i][j] = value;
+        }
+    }
+}
+
 /*void fill_matrix(usz mesh_size, matrix_t matrix)
 {
     assert(matrix.data != NULL && mesh_size > 0);

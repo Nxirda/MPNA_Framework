@@ -13,6 +13,6 @@ typedef struct matrix_s
 
 extern void allocate_matrix(usz size_x, usz size_y, matrix_t *matrix);
 //extern void allocate_matrix(usz mesh_size, matrix_t *matrix);
-//extern void fill_matrix(usz mesh_size, matrix_t matrix);
+extern void fill_matrix(matrix_t *matrix, f64 value);
 extern void print_matrix(matrix_t matrix);
 extern void free_matrix(matrix_t matrix);
