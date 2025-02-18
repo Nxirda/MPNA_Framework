@@ -10,7 +10,7 @@ int framework_test(int argc, char **argv)
     if(argc != 3 && argc != 1)
     {
         fprintf(stderr, "Usage is %s <mesh_size> <nb_iter>\n", argv[0]);
-        exit(EXIT_SUCCESS);
+        return 1;
     }
     
     usz mesh_size = 4;
@@ -39,19 +39,11 @@ int framework_test(int argc, char **argv)
     vector_t x_csr;
     allocate_vector(&x_csr, nb_bytes);
 
-    //printf("====== Matrix in CSR storage format ======\n");
     csr_matrix_t csr;
     poisson_CSR(mesh_size, &csr);
-    //allocate_CSR(mesh_size, &csr);
-    //fill_CSR(mesh_size, &csr);
-    //print_CSR(&csr);
    
-    //printf("====== Matrix in general storage format ======\n");
     matrix_t general;
     poisson_general(mesh_size, &general); 
-    //allocate_matrix(mesh_size, &general);
-    //fill_matrix(mesh_size, general);
-    //print_matrix(general);
     
     /*printf("====== Matrix in general CSC format ======\n");
     csc_matrix_t csc;
@@ -65,10 +57,10 @@ int framework_test(int argc, char **argv)
         printf("====== Jacobi Testing (quick) ======\n");
         
         init_constant_vector(&x_csr, 0.0);
-        usz jc_iter = jacobi_csr(&csr, &x_csr, &b, iter, tol);
-
         init_constant_vector(&x_general, 0.0);
-        usz jg_iter = jacobi_general(&general, &x_general, &b, iter, tol);
+
+        usz gen_iter = jacobi_general(&general, &x_general, &b, iter, tol);
+        usz csr_iter = jacobi_csr(&csr, &x_csr, &b, iter, tol);
 
         u8 jacobi_equal = equal_vector(&x_general, &x_csr); 
         if(jacobi_equal)
@@ -76,8 +68,8 @@ int framework_test(int argc, char **argv)
         else
             printf("The two implementations yields different results\n");
         
-        printf("General iterations : %ld\n", jg_iter);
-        printf("Csr iterations     : %ld\n", jc_iter);
+        printf("General iterations : %ld\n", gen_iter);
+        printf("Csr iterations     : %ld\n", csr_iter);
         printf("\n");
     }
 /******************************************************************************/
@@ -87,8 +79,8 @@ int framework_test(int argc, char **argv)
         init_constant_vector(&x_csr, 0.0);
         init_constant_vector(&x_general, 0.0);
 
-        usz gsc_iter = gauss_seidel_csr(&csr, &x_csr, &b, iter, tol);
-        usz gsg_iter = gauss_seidel_general(&general, &x_general, &b, iter, tol);
+        usz gen_iter = gauss_seidel_general(&general, &x_general, &b, iter, tol);
+        usz csr_iter = gauss_seidel_csr(&csr, &x_csr, &b, iter, tol);
 
         u8 gauss_seidel_equal = equal_vector(&x_general, &x_csr); 
        
@@ -97,25 +89,19 @@ int framework_test(int argc, char **argv)
         else
             printf("The two implementations yields different results\n");
         
-        printf("General iterations : %ld\n", gsg_iter);
-        printf("Csr iterations     : %ld\n", gsc_iter);
+        printf("General iterations : %ld\n", gen_iter);
+        printf("Csr iterations     : %ld\n", csr_iter);
         printf("\n");
     }
 /******************************************************************************/
     {
         printf("====== Conjugate gradient Testing (quick) ======\n");
         
-        //printf("CSR : \n");
         init_constant_vector(&x_csr, 0.0);
-        usz cjc_iter = conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
-        //printf("LHS is :\n");
-        //print_vector(&x_csr);
-
-        //printf("General : \n");
         init_constant_vector(&x_general, 0.0);
-        usz cjg_iter = conjugate_gradient_general(&general, &x_general, &b, iter, tol);
-        //printf("LHS is :\n");
-        //print_vector(&x_general);
+        
+        usz gen_iter = conjugate_gradient_general(&general, &x_general, &b, iter, tol);
+        usz csr_iter = conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
 
         u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
         if(conjugate_gradient_equal)
@@ -127,36 +113,34 @@ int framework_test(int argc, char **argv)
             printf("The two implementations yields different results\n");
         }
  
-        printf("General iterations : %ld\n", cjg_iter);
-        printf("Csr iterations     : %ld\n", cjc_iter);
+        printf("General iterations : %ld\n", gen_iter);
+        printf("Csr iterations     : %ld\n", csr_iter);
         printf("\n");
     }
 /******************************************************************************/
-    /*printf("====== GMRES Testing (quick) ======\n");
-    
-    printf("CSR : \n");
-    init_constant_vector(&x_csr, 0.0);
-    conjugate_gradient_csr(&csr, &x_csr, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_csr);
-
-    printf("General : \n");
-    init_constant_vector(&x_general, 0.0);
-    GMRES_general(&general, &x_general, &b, iter, tol);
-    printf("LHS is :\n");
-    print_vector(&x_general);
-*/
-    /*u8 conjugate_gradient_equal = equal_vector(&x_general, &x_csr); 
-    if(conjugate_gradient_equal)
     {
-        printf("Conjugate Gradient implementations yields the same result\n");
+        printf("====== GMRES Testing (quick) ======\n");
+        
+        init_constant_vector(&x_csr, 0.0);
+        init_constant_vector(&x_general, 0.0);
+
+        usz gen_iter = GMRES_general(&general, &x_general, &b, iter, tol);
+        usz csr_iter = GMRES_csr(&csr, &x_csr, &b, iter, tol);
+        
+        u8 gmres_equal = equal_vector(&x_general, &x_csr); 
+        if(gmres_equal)
+        {
+            printf("Conjugate Gradient implementations yields the same result\n");
+        }
+        else
+        {
+            printf("The two implementations yields different results\n");
+        }
+
+        printf("General iterations : %ld\n", gen_iter);
+        printf("Csr iterations     : %ld\n", csr_iter);
+        printf("\n");
     }
-    else
-    {
-        printf("The two implementations yields different results\n");
-    }*/
-
-    printf("\n");
 /******************************************************************************/
 
     free_CSR(&csr);
@@ -166,8 +150,7 @@ int framework_test(int argc, char **argv)
     free_vector(&x_csr);
     free_vector(&b);
 
-    exit(EXIT_SUCCESS);
-    //return 0;
+    return 0;
 }
 
 #define MAX_SIZE 2048

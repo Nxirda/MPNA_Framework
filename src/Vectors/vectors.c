@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <time.h>
 
 static inline f64 f64_random(f64 min, f64 max)
 {
     assert(min < max);
+    srand(time(NULL));
     f64 res = min;
     f64 dist = max - min;
     f64 frac = (f64)rand()/(f64)RAND_MAX;

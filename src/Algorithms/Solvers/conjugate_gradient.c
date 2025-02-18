@@ -51,7 +51,7 @@ usz conjugate_gradient_general(matrix_t const *matrix, vector_t *x,
 
     while((k < max_iterations) && (d_new > lim))
     {
-        // A * direction
+        // A * direction | Is a dgemv
         for(usz i = 0; i < N; i++)
         {
             tmp_q = 0.0;

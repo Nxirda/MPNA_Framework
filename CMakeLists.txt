@@ -8,6 +8,10 @@ set (CMAKE_COLOR_DIAGNOSTICS ON)
 
 set(C_COMPILER "gcc")
 
+find_package(LAPACK REQUIRED)
+find_package(BLAS REQUIRED)
+find_package(LAPACKE REQUIRED)
+
 if(C_COMPILER STREQUAL "gcc")
     set(CMAKE_C_COMPILER "gcc")
     set(CMAKE_C_FLAGS_RELEASE "-O3 -march=native")
