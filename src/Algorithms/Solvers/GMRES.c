@@ -160,9 +160,9 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
     for(usz i = 0; i < Q.dim_x; i++)
         Q_span[i][0] = residual.data[i] / beta;
 
-    vector_t y;
+    /*vector_t y;
     allocate_vector(&y, size+1);
-    init_constant_vector(&y, 0.0);
+    init_constant_vector(&y, 0.0);*/
     
     vector_t tmp_x;
     allocate_vector(&tmp_x, x->size);
@@ -180,6 +180,8 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
     init_constant_vector(&g, 0.0);
     g.data[0] = beta;
 
+    f64 *H_1d = (f64 *)malloc((size+1) * max_iterations * sizeof(f64));
+    
     usz k = 1;
     while(k < max_iterations)
     {
@@ -188,7 +190,6 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
         init_constant_vector(&g, 0.0);
         g.data[0] = beta;
 
-       f64 *H_1d = (f64 *)malloc((size+1)*k * sizeof(f64));
 
         for (int i = 0; i < size+1; ++i) {
             for (int j = 0; j < k; ++j) {
@@ -197,12 +198,10 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
         }
 
         LAPACKE_dgels(LAPACK_COL_MAJOR, 'N', size+1, k, 1, H_1d, size+1, g.data, size+1);
-        
-        free(H_1d);
-
-        copy_vector(&g, &y);
-        
+    
+        //copy_vector(&g, &y);
         //print_vector(&g);
+        
         for(usz i = 0; i < Q.dim_x; i++)
         {
             tmp_x.data[i] = x->data[i];
@@ -215,11 +214,10 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
         compute_residual_general_2(matrix, &tmp_x, b, &residual);
         norm = dot_product(&residual, &residual);
         norm = sqrt(norm);
+        
         //apply_rotations(k, &H, &cs, &sn);
-         
         //g.data[k] = -sn.data[k-1] * g.data[k-1];
         //g.data[k-1] = cs.data[k-1] * g.data[k-1];
-        
         // Might lack a condition here tbh
         if(norm < tol)
         {
@@ -231,22 +229,22 @@ usz GMRES_general(matrix_t const *matrix, vector_t *x,
    
     // g - H*y;
     //solve_ls(k, &g, &H, &y); 
-
     // x = x + Q * y || consider only Q until K
     for(usz i = 0; i < Q.dim_x; i ++)
     {
         f64 sum = 0.0;
         for(usz j = 0; j < k; j++)
         {
-            sum += Q_span[i][j] * y.data[j]; 
+            sum += Q_span[i][j] * g.data[j]; 
         }
         x->data[i] = sum;
     }
 
+    free(H_1d);
     free_matrix(Q);
     free_matrix(H);
     free_vector(&residual);
-    free_vector(&y);
+    //free_vector(&y);
     free_vector(&tmp_x);
     free_vector(&g);
     return k;
@@ -352,9 +350,9 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
     for(usz i = 0; i < Q.dim_x; i++)
         Q_span[i][0] = residual.data[i] / beta;
 
-    vector_t y;
+    /*vector_t y;
     allocate_vector(&y, size+1);
-    init_constant_vector(&y, 0.0);
+    init_constant_vector(&y, 0.0);*/
     
     vector_t tmp_x;
     allocate_vector(&tmp_x, x->size);
@@ -364,6 +362,8 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
     init_constant_vector(&g, 0.0);
     g.data[0] = beta;
 
+    f64 *H_1d = (f64 *)malloc((size+1)* max_iterations * sizeof(f64));
+    
     usz k = 1;
     while(k < max_iterations)
     {
@@ -372,7 +372,6 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
         init_constant_vector(&g, 0.0);
         g.data[0] = beta;
 
-       f64 *H_1d = (f64 *)malloc((size+1)*k * sizeof(f64));
 
         for (int i = 0; i < size+1; ++i) {
             for (int j = 0; j < k; ++j) {
@@ -381,10 +380,6 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
         }
 
         LAPACKE_dgels(LAPACK_COL_MAJOR, 'N', size+1, k, 1, H_1d, size+1, g.data, size+1);
-        
-        free(H_1d);
-
-        copy_vector(&g, &y);
         
         for(usz i = 0; i < Q.dim_x; i++)
         {
@@ -412,16 +407,16 @@ usz GMRES_csr(csr_matrix_t const *matrix, vector_t *x,
         f64 sum = 0.0;
         for(usz j = 0; j < k; j++)
         {
-            sum += Q_span[i][j] * y.data[j]; 
+            sum += Q_span[i][j] * g.data[j]; 
         }
         x->data[i] += sum;
     }
 
+    free(H_1d);
     free_matrix(Q);
     free_matrix(H);
-    free_vector(&residual);
-    free_vector(&y);
-    free_vector(&tmp_x);
     free_vector(&g);
+    free_vector(&residual);
+    free_vector(&tmp_x);
     return k;
 }

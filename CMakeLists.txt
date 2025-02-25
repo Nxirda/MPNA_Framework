@@ -6,14 +6,22 @@ set (CMAKE_C_STANDARD 11)
 set (CMAKE_C_STANDARD_REQUIRED ON)
 set (CMAKE_COLOR_DIAGNOSTICS ON)
 
-set(C_COMPILER "gcc")
+set(C_COMPILER "mpicc")
 
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
 find_package(LAPACKE REQUIRED)
 
+find_package(MPI REQUIRED)
+
 if(C_COMPILER STREQUAL "gcc")
     set(CMAKE_C_COMPILER "gcc")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -g -march=native")
+    set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -Wall -Wextra -Wconversions -Wpedantic")
+    set(CMAKE_C_LINK_FLAGS_RELEASE "-flto")
+    set(CMAKE_C_LINK_FLAGS_DEBUG "")
+elseif(C_COMPILER STREQUAL "mpicc")
+    set(CMAKE_C_COMPILER "mpicc")
     set(CMAKE_C_FLAGS_RELEASE "-O3 -g -march=native")
     set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -Wall -Wextra -Wconversions -Wpedantic")
     set(CMAKE_C_LINK_FLAGS_RELEASE "-flto")

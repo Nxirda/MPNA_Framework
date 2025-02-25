@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "matrices_utils.h"
-#include "vector.h"
 
 typedef struct csr_matrix_s
 {

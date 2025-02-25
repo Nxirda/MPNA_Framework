@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 #include "solver.h"
-#include "poisson_laplacian_2D.h"
+#include "fillers.h"
+#include "mpi_wrapper.h"
 
 int framework_test(int argc, char **argv)
 {
@@ -41,8 +42,6 @@ int framework_test(int argc, char **argv)
 
     csr_matrix_t csr;
     poisson_CSR(mesh_size, &csr);
-    //print_CSR(&csr); 
-    
     
     matrix_t general;
     poisson_general(mesh_size, &general); 
@@ -144,8 +143,7 @@ int framework_test(int argc, char **argv)
         printf("Csr iterations     : %ld\n", csr_iter);
         printf("\n");
     }
-/******************************************************************************/
-
+    
     free_CSR(&csr);
     free_matrix(general);
 
@@ -156,88 +154,58 @@ int framework_test(int argc, char **argv)
     return 0;
 }
 
-#define MAX_SIZE 2048
-void init_Matrix_Market_CSR(ascii *filename, csr_matrix_t *matrix)
-{
-    FILE *file = fopen(filename, "r");
-    if(!file)
-    {
-        perror("Failed to open given file");
-        exit(EXIT_FAILURE);
-    }
-    
-    ascii buffer[MAX_SIZE];
-    while(fgets(buffer, sizeof(buffer), file)) 
-    {
-        if(buffer[0] == '%') continue;
-        break;
-    }
-
-    usz rows, cols, NNZ;
-    sscanf(buffer, "%ld %ld %ld", &rows, &cols, &NNZ);
-
-    matrix->data        = (f64 *)malloc(NNZ * sizeof(f64));
-    matrix->col_index   = (usz *)malloc(NNZ * sizeof(usz));
-    matrix->row_index   = (usz *)malloc((rows+1) * sizeof(usz));
-    matrix->size        = rows * cols;
-    
-    usz row = 0;
-    usz col = 0;
-    usz curr_nnz = 0;
-    f64 value = 0.0;
-    while(fgets(buffer, sizeof(buffer), file))
-    {
-        if(buffer[0] == '%') continue;
-
-        sscanf(buffer, "%ld %ld %lf", &row, &col, &value);
-      
-        // As the format is a 1 based indexing
-        row --;
-        col --;
-
-        matrix->data[curr_nnz] = value;
-        matrix->col_index[curr_nnz] = col;
-        curr_nnz ++;
-    
-        matrix->row_index[row+1]++;
-    }
-    // Convert row_ptr to cumulative sum
-    for (int i = 1; i <= rows; i++) {
-        matrix->row_index[i] += matrix->row_index[i - 1];
-    }
-    fclose(file);
-}
-
-//void mpi_gemv_csr(csr_matrix_t const* base, usz nb_procs)
-
 int main(int argc, char **argv)
 {
-    /*if(argc != 2)
+    MPI_Init(&argc, &argv);
+
+    i32 size, rank;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    printf("Hello from rank %d\n",rank);
+
+    if(argc != 2 && rank == 0)
     {
         printf("Usage is : %s <filename.mtx>\n", argv[0]);
+        MPI_Abort(MPI_COMM_WORLD, 1);
         exit(EXIT_FAILURE);
     }
+   
+    coo_matrix_t *global_matrix = NULL;
+    coo_matrix_t local_matrix;
+    vector_t local_vector;
+    vector_t *global_vector = NULL;
     
-    // Read in COO maybe ?
-    // Read and fill matrix on rank 0
-    // Distribute on all ranks
+    if(rank == 0)
+    {   
+        ascii *filename = argv[1];
+        coo_matrix_t mat;
+        mm_load_coo(filename, &mat);
+        global_matrix = &mat;
+        
+        vector_t vec;
+        allocate_vector(&vec, global_matrix->dim_y);
+        global_vector = &vec;
+    }
 
-    ascii *filename = argv[1];
+    distribute_coo(global_matrix, &local_matrix);
+    
+    csr_matrix_t local_csr;
+    coo_to_csr(&local_matrix, &local_csr); 
+    
+    init_random_vector_MPI(&local_vector, local_matrix.dim_x);
+    csr_matrix_t t;
+   
+    csr_mv_MPI(&t, &local_vector, global_vector);
 
-    csr_matrix_t mat;
-    init_Matrix_Market_CSR(filename, &mat);
-    print_CSR(&mat);*/
-    
-    /*vector_t vec;
-    allocate_vector(&vec, mat.size);
-    init_constant_vector(&vec, 0.0);
+    if(rank == 0)
+    {
+        print_vector(global_vector);
+        free_vector(global_vector);
+    }   
+    //print res vec();
 
-    vector_t res;
-    allocate_vector(&res, mat.size);
-    init_constant_vector(&res, 0.0);*/
-    
-    //gemv_CSR()
-    
-    framework_test(argc, argv);
+    //framework_test(argc, argv);
+    MPI_Finalize();
     exit(EXIT_SUCCESS);
 }

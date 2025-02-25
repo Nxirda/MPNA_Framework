@@ -21,7 +21,38 @@ usz NNZ_in_general(matrix_t const *a)
     return NNZ;
 }
 
-matrix_t csr_to_general(csr_matrix_t const *a)
+void coo_to_csr(coo_matrix_t *matrix, csr_matrix_t *target)
+{
+    usz nnz = sizeof(matrix->data)/sizeof(matrix->data[0]);
+    
+    usz dim_x = 0, dim_y = 0;
+    for(usz i = 0; i < nnz; i++)
+    {
+        if(matrix->row_index[i] > dim_x) dim_x = matrix->row_index[i];
+        if(matrix->col_index[i] > dim_y) dim_y = matrix->col_index[i];
+    }
+
+    dim_x ++;
+    dim_y ++;
+    
+    allocate_CSR(dim_x, dim_y, nnz, target);
+    
+    for(usz i = 0; i < dim_y; i++)
+        target->row_index[i] = 0;
+
+    for(usz i = 0; i < nnz; i++)
+    {
+        target->data[i] = matrix->data[i];
+        target->col_index[i] = matrix->col_index[i];
+        target->row_index[matrix->row_index[i] +1]++;
+    }
+
+    for(usz i = 0; i < dim_y; i++)
+    {
+        target->row_index[i +1] += target->row_index[i];
+    }
+}
+/*matrix_t csr_to_general(csr_matrix_t const *a)
 {
 
     const usz N = a->size;
@@ -241,4 +272,4 @@ u8 general_equal_general(matrix_t const *a, matrix_t const *b)
     }
 
     return 1;
-}
+}*/
