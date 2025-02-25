@@ -20,35 +20,16 @@ void allocate_COO(usz dim_x, usz dim_y, usz NNZ, coo_matrix_t *matrix)
 
 void print_COO(coo_matrix_t *matrix)
 {
-    printf("Not done\n");
-    return;
-}
-/*assert(matrix->data != NULL);
+    assert(matrix->data != NULL);
  
-    usz idx = 0;
-
-    for(usz i = 0; i < matrix->dim_x; i++)
+    usz size = sizeof(matrix->data)/sizeof(matrix->data[0]);
+    printf("SIZE = %d\n", size);
+    for(usz i = 0; i < size; i++)
     {
-        usz elems_in_row = matrix->row_index[i+1] - matrix->row_index[i]; 
-        
-        for(usz j = 0; j < matrix->dim_y; j++)
-        {
-            if(elems_in_row > 0 && matrix->col_index[idx] == j)
-            {
-                printf("%-2.3f ", matrix->data[idx]);
-                elems_in_row --;
-                idx ++;
-            }
-            else
-            {
-                printf("__.___ " );
-        
-            }
-        }
-        printf("\n");
-
+        printf("row: %zu col: %zu value: %f\n", matrix->row_index[i], 
+                matrix->col_index[i], matrix->data[i]);
     }
-}*/
+}
 
 void free_COO(coo_matrix_t *matrix)
 {

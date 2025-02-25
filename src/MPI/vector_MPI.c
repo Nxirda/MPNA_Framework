@@ -9,7 +9,7 @@ void init_random_vector_MPI(vector_t *local_vector, usz vec_size)
     allocate_vector(local_vector, vec_size);
     if(rank == 0)
     {
-        init_random_vector(local_vector, 1e-7, 1e7);
+        init_random_vector(local_vector, 10e-7, 10e7);
     }
-    MPI_Bcast(local_vector->data, vec_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    //MPI_Bcast(local_vector->data, vec_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 }

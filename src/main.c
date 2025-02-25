@@ -173,7 +173,6 @@ int main(int argc, char **argv)
    
     coo_matrix_t *global_matrix = NULL;
     coo_matrix_t local_matrix;
-    vector_t local_vector;
     vector_t *global_vector = NULL;
     
     if(rank == 0)
@@ -181,28 +180,34 @@ int main(int argc, char **argv)
         ascii *filename = argv[1];
         coo_matrix_t mat;
         mm_load_coo(filename, &mat);
+        print_COO(&mat);
+
         global_matrix = &mat;
         
         vector_t vec;
         allocate_vector(&vec, global_matrix->dim_y);
+        init_constant_vector(&vec, 2.0);
         global_vector = &vec;
     }
-
+    
+    print_COO(global_matrix);
+    /*
     distribute_coo(global_matrix, &local_matrix);
     
     csr_matrix_t local_csr;
     coo_to_csr(&local_matrix, &local_csr); 
     
+    vector_t local_vector;
     init_random_vector_MPI(&local_vector, local_matrix.dim_x);
-    csr_matrix_t t;
-   
-    csr_mv_MPI(&t, &local_vector, global_vector);
+    
+    print_CSR(&local_csr);
+    csr_mv_MPI(&local_csr, &local_vector, global_vector);
 
     if(rank == 0)
     {
-        print_vector(global_vector);
+        //print_vector(global_vector);
         free_vector(global_vector);
-    }   
+    }   */
     //print res vec();
 
     //framework_test(argc, argv);
