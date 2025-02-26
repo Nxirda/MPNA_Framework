@@ -7,6 +7,7 @@ typedef struct coo_matrix_s
     usz size;
     usz dim_x;
     usz dim_y;
+    usz nnz;
 
     usz *col_index;
     usz *row_index; 

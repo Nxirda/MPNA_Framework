@@ -11,5 +11,5 @@ void init_random_vector_MPI(vector_t *local_vector, usz vec_size)
     {
         init_random_vector(local_vector, 10e-7, 10e7);
     }
-    //MPI_Bcast(local_vector->data, vec_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(local_vector->data, vec_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 }

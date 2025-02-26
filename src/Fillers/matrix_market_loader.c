@@ -35,8 +35,8 @@ void mm_load_coo(const ascii *filepath, coo_matrix_t *matrix)
     // Symmetric
     len = len * 2;
 
-    i32 *ia = (i32 *)malloc(len * sizeof(i32));
-    i32 *ja = (i32 *)malloc(len * sizeof(i32)); 
+    usz *ia = (usz *)malloc(len * sizeof(usz));
+    usz *ja = (usz *)malloc(len * sizeof(usz)); 
     f64 *val = (f64 *)malloc(len * sizeof(f64));
     
     line = strtok(NULL, "\n");
@@ -65,8 +65,8 @@ void mm_load_coo(const ascii *filepath, coo_matrix_t *matrix)
     }
     
     allocate_COO(rows, cols, nnz, matrix);
-    matrix->row_index = (usz*)ia;
-    matrix->col_index = (usz *)ja;
+    matrix->row_index = ia;
+    matrix->col_index = ja;
     val = (f64 *)realloc(val, sizeof(f64) * nnz);
     matrix->data = val;
 }

@@ -8,7 +8,7 @@ void allocate_COO(usz dim_x, usz dim_y, usz NNZ, coo_matrix_t *matrix)
 {
     const usz N = dim_x * dim_y;
     matrix->size = N;
-
+    matrix->nnz = NNZ;
     matrix->dim_x = dim_x;
     matrix->dim_y = dim_y;
 
@@ -21,10 +21,11 @@ void allocate_COO(usz dim_x, usz dim_y, usz NNZ, coo_matrix_t *matrix)
 void print_COO(coo_matrix_t *matrix)
 {
     assert(matrix->data != NULL);
- 
-    usz size = sizeof(matrix->data)/sizeof(matrix->data[0]);
-    printf("SIZE = %d\n", size);
-    for(usz i = 0; i < size; i++)
+    printf("Size : %d\n", matrix->size);
+    printf("NNZ  : %d\n", matrix->nnz);
+    printf("Dim x : %d\n", matrix->dim_x);
+    printf("Dim y : %d\n", matrix->dim_y);
+    for(usz i = 0; i < matrix->nnz; i++)
     {
         printf("row: %zu col: %zu value: %f\n", matrix->row_index[i], 
                 matrix->col_index[i], matrix->data[i]);

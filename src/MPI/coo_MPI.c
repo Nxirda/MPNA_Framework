@@ -12,8 +12,8 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
         i32 rows_per_proc   = global_matrix->dim_x / size;
         i32 start_row       = rank * rows_per_proc;
         i32 end_row         = (rank == size -1) ? global_matrix->dim_x : start_row + rows_per_proc;
-        usz nnz_global      = sizeof(global_matrix->data)/sizeof(global_matrix->data[0]);
-        
+        usz nnz_global = global_matrix->nnz;
+
         usz send_count[size];
         memset(send_count, 0, size * sizeof(usz));
         for(usz i = 0; i < nnz_global; i++)
@@ -48,11 +48,11 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
             MPI_Send(&(global_matrix->dim_x), 1             , MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD);
             MPI_Send(&(global_matrix->dim_y), 1             , MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD);
             MPI_Send(&send_count[i]         , 1             , MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD);
-            MPI_Send(&row_sorted + displ[i] , send_count[i] , MPI_UNSIGNED_LONG, i, 3, MPI_COMM_WORLD);
-            MPI_Send(&col_sorted + displ[i] , send_count[i] , MPI_UNSIGNED_LONG, i, 4, MPI_COMM_WORLD);
-            MPI_Send(&val_sorted + displ[i] , send_count[i] , MPI_DOUBLE       , i, 5, MPI_COMM_WORLD);
+            MPI_Send(row_sorted + displ[i]  , send_count[i] , MPI_UNSIGNED_LONG, i, 3, MPI_COMM_WORLD);
+            MPI_Send(col_sorted + displ[i]  , send_count[i] , MPI_UNSIGNED_LONG, i, 4, MPI_COMM_WORLD);
+            MPI_Send(val_sorted + displ[i]  , send_count[i] , MPI_DOUBLE       , i, 5, MPI_COMM_WORLD);
         }
-
+        
         allocate_COO(global_matrix->dim_x,global_matrix->dim_y ,send_count[0], local_matrix);
 
         for(usz i = 0; i < send_count[0]; i++)
@@ -61,20 +61,20 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
             local_matrix->row_index[i]  = row_sorted[i];
             local_matrix->col_index[i]  = col_sorted[i];
         }
-
     }
     else
     {  
-
-        usz nnz_local = 0;
-        MPI_Recv(&(local_matrix->dim_x), 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(&(local_matrix->dim_y), 1, MPI_UNSIGNED_LONG, 0, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(&nnz_local         , 1, MPI_UNSIGNED_LONG, 0, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        usz nnz_local   = 0;
+        usz local_dim_x = 0;
+        usz local_dim_y = 0;
+        MPI_Recv(&local_dim_x   , 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&local_dim_y   , 1, MPI_UNSIGNED_LONG, 0, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&nnz_local     , 1, MPI_UNSIGNED_LONG, 0, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         
-        allocate_COO(local_matrix->dim_x, local_matrix->dim_y, nnz_local, local_matrix);
+        allocate_COO(local_dim_x, local_dim_y, nnz_local, local_matrix);
+         
         MPI_Recv(local_matrix->row_index, nnz_local, MPI_UNSIGNED_LONG  , 0, 3, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_Recv(local_matrix->col_index, nnz_local, MPI_UNSIGNED_LONG  , 0, 4, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_Recv(local_matrix->data     , nnz_local, MPI_DOUBLE         , 0, 5, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
-    
 }

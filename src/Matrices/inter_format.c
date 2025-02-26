@@ -1,7 +1,7 @@
 #include "inter_format.h"
 
 #include <stdlib.h>
-
+#include <stdio.h>
 usz NNZ_in_general(matrix_t const *a)
 {
     const usz N = a->size;
@@ -21,11 +21,15 @@ usz NNZ_in_general(matrix_t const *a)
     return NNZ;
 }
 
+// Meh is maybe an MPI Version tbh
 void coo_to_csr(coo_matrix_t *matrix, csr_matrix_t *target)
 {
-    usz nnz = sizeof(matrix->data)/sizeof(matrix->data[0]);
-    
+    usz nnz = matrix->nnz;
     usz dim_x = 0, dim_y = 0;
+
+    usz base_row_idx = matrix->row_index[0];
+    usz base_col_idx = matrix->col_index[0];
+
     for(usz i = 0; i < nnz; i++)
     {
         if(matrix->row_index[i] > dim_x) dim_x = matrix->row_index[i];
@@ -35,22 +39,28 @@ void coo_to_csr(coo_matrix_t *matrix, csr_matrix_t *target)
     dim_x ++;
     dim_y ++;
     
+    dim_x -= base_row_idx;
+    dim_y -= base_col_idx;
+
     allocate_CSR(dim_x, dim_y, nnz, target);
     
-    for(usz i = 0; i < dim_y; i++)
+    for(usz i = 0; i < dim_y+1; i++)
         target->row_index[i] = 0;
 
     for(usz i = 0; i < nnz; i++)
     {
         target->data[i] = matrix->data[i];
-        target->col_index[i] = matrix->col_index[i];
-        target->row_index[matrix->row_index[i] +1]++;
+        printf("%f\n", matrix->data[i]);
+
+        usz curr_col_idx = matrix->col_index[i] - base_col_idx;
+        target->col_index[i] = curr_col_idx;
+
+        usz curr_row_idx = (matrix->row_index[i]+1) - base_row_idx;
+        target->row_index[curr_row_idx]++;
     }
 
     for(usz i = 0; i < dim_y; i++)
-    {
-        target->row_index[i +1] += target->row_index[i];
-    }
+        target->row_index[i+1] += target->row_index[i];
 }
 /*matrix_t csr_to_general(csr_matrix_t const *a)
 {

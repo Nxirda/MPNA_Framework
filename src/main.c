@@ -162,8 +162,6 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    printf("Hello from rank %d\n",rank);
-
     if(argc != 2 && rank == 0)
     {
         printf("Usage is : %s <filename.mtx>\n", argv[0]);
@@ -180,8 +178,7 @@ int main(int argc, char **argv)
         ascii *filename = argv[1];
         coo_matrix_t mat;
         mm_load_coo(filename, &mat);
-        print_COO(&mat);
-
+        //print_COO(&mat);
         global_matrix = &mat;
         
         vector_t vec;
@@ -190,25 +187,26 @@ int main(int argc, char **argv)
         global_vector = &vec;
     }
     
-    print_COO(global_matrix);
-    /*
     distribute_coo(global_matrix, &local_matrix);
+   
+    //printf("Rank [%d]\n", rank);
+    //print_COO(&local_matrix);
     
     csr_matrix_t local_csr;
     coo_to_csr(&local_matrix, &local_csr); 
     
-    vector_t local_vector;
-    init_random_vector_MPI(&local_vector, local_matrix.dim_x);
-    
     print_CSR(&local_csr);
-    csr_mv_MPI(&local_csr, &local_vector, global_vector);
+
+    /*vector_t local_vector;
+    init_random_vector_MPI(&local_vector, local_matrix.dim_x);*/
+    
+    //csr_mv_MPI(&local_csr, &local_vector, global_vector);
 
     if(rank == 0)
     {
         //print_vector(global_vector);
         free_vector(global_vector);
-    }   */
-    //print res vec();
+    }   
 
     //framework_test(argc, argv);
     MPI_Finalize();
