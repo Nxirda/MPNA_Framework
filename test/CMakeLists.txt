@@ -2,6 +2,7 @@ add_Library(
     Test_lib
 
     #Matrices/inter_format_test.c
+    Solvers/solver_test.c
     Vectors/vector_test.c
     test_utils.c 
 )
@@ -13,6 +14,7 @@ target_include_directories(Test_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_SOURCE_DIR}/Matrices
     ${CMAKE_CURRENT_SOURCE_DIR}/Vectors
+    ${CMAKE_CURRENT_SOURCE_DIR}/Solvers
 )
 
 target_link_libraries(Test_lib PUBLIC Source_Lib)
