@@ -41,12 +41,8 @@ void coo_to_csr(coo_matrix_t *matrix, csr_matrix_t *target)
     for(usz i = 0; i < nnz; i++)
     {
         target->data[i] = matrix->data[i];
-
-        usz curr_col_idx = matrix->col_index[i] - base_col_idx;
-        target->col_index[i] = curr_col_idx;
-
-        usz curr_row_idx = (matrix->row_index[i]+1) - base_row_idx;
-        target->row_index[curr_row_idx]++;
+        target->col_index[i] = matrix->col_index[i];
+        target->row_index[matrix->row_index[i]+1]++;
     }
 
     for(usz i = 0; i < dim_y; i++)

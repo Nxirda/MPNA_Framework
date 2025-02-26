@@ -1,5 +1,6 @@
 #include "coo_MPI.h"
 #include <string.h>
+#include <stdlib.h> 
 
 void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
 {
@@ -21,7 +22,7 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
             i32 owner = (global_matrix->row_index[i] * size) / global_matrix->dim_x;
             send_count[owner]++;
         }
-        
+
         usz displ[size];
         memset(displ, 0, size * sizeof(usz));
         for(usz i = 1; i < size; i++)
@@ -31,13 +32,15 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
     
         usz offsets[size];
         memset(offsets, 0, size * sizeof(usz));
-        usz row_sorted[nnz_global];
-        usz col_sorted[nnz_global];
-        f64 val_sorted[nnz_global];
+        
+        usz *row_sorted = (usz *)malloc(nnz_global * sizeof(usz));
+        usz *col_sorted = (usz *)malloc(nnz_global * sizeof(usz));
+        f64 *val_sorted = (f64 *)malloc(nnz_global * sizeof(f64));
+
         for(usz i = 0; i < nnz_global; i++)
         {
             i32 owner = (global_matrix->row_index[i] * size) / global_matrix->dim_x;
-            i32 pos = displ[owner] + offsets[owner]++;
+            i32 pos = displ[owner] + (offsets[owner]++);
             row_sorted[pos] = global_matrix->row_index[i];
             col_sorted[pos] = global_matrix->col_index[i];
             val_sorted[pos] = global_matrix->data[i];
@@ -45,9 +48,11 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
 
         for(usz i = 1; i < size; i++) 
         {
+            // Might be possible to just Bcast them tbh
             MPI_Send(&(global_matrix->dim_x), 1             , MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD);
             MPI_Send(&(global_matrix->dim_y), 1             , MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD);
             MPI_Send(&send_count[i]         , 1             , MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD);
+
             MPI_Send(row_sorted + displ[i]  , send_count[i] , MPI_UNSIGNED_LONG, i, 3, MPI_COMM_WORLD);
             MPI_Send(col_sorted + displ[i]  , send_count[i] , MPI_UNSIGNED_LONG, i, 4, MPI_COMM_WORLD);
             MPI_Send(val_sorted + displ[i]  , send_count[i] , MPI_DOUBLE       , i, 5, MPI_COMM_WORLD);
@@ -61,6 +66,10 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
             local_matrix->row_index[i]  = row_sorted[i];
             local_matrix->col_index[i]  = col_sorted[i];
         }
+
+        free(row_sorted);
+        free(col_sorted);
+        free(val_sorted);
     }
     else
     {  
