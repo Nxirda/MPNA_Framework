@@ -1,17 +1,22 @@
+#include <assert.h>
+#include <stdio.h>
 #include "dgemv.h" 
 
 // r = alpha*A*x + beta*b
 void general_mv(f64 alpha, matrix_t *A, vector_t *x, f64 beta, vector_t *b, vector_t *r)
 {
-    const usz N = x->size;
+    //const usz N = x->size;
+    const usz rows = A->dim_x;
+    const usz cols = A->dim_y;
+        
     f64 (*A_span)[A->dim_y] = make_2D_span(f64, , A->data, A->dim_y);
 
-    for(usz i = 0; i < N; i++)
+    for(usz i = 0; i < rows; i++)
     {
         f64 r_i = 0.0;
         f64 b_i = b->data[i];
 
-        for(usz j = 0; j < N; j++)
+        for(usz j = 0; j < cols; j++)
         {
             r_i += alpha * A_span[i][j] * x->data[j]; 
         }
@@ -22,6 +27,8 @@ void general_mv(f64 alpha, matrix_t *A, vector_t *x, f64 beta, vector_t *b, vect
 
 void csr_mv(f64 alpha, csr_matrix_t *A, vector_t *x, f64 beta, vector_t *b, vector_t *r)
 {
+    assert(A->dim_x == x->size);
+
     const usz N = x->size;
 
     for(usz i = 0; i < N; i++)

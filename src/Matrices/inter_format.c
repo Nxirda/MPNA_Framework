@@ -30,18 +30,9 @@ void coo_to_csr(coo_matrix_t *matrix, csr_matrix_t *target)
     usz base_row_idx = matrix->row_index[0];
     usz base_col_idx = matrix->col_index[0];
 
-    for(usz i = 0; i < nnz; i++)
-    {
-        if(matrix->row_index[i] > dim_x) dim_x = matrix->row_index[i];
-        if(matrix->col_index[i] > dim_y) dim_y = matrix->col_index[i];
-    }
-
-    dim_x ++;
-    dim_y ++;
+    dim_x = matrix->dim_x; // We keep the same ammount of elemns per row
+    dim_y = matrix->dim_y;
     
-    dim_x -= base_row_idx;
-    dim_y -= base_col_idx;
-
     allocate_CSR(dim_x, dim_y, nnz, target);
     
     for(usz i = 0; i < dim_y+1; i++)
@@ -50,7 +41,6 @@ void coo_to_csr(coo_matrix_t *matrix, csr_matrix_t *target)
     for(usz i = 0; i < nnz; i++)
     {
         target->data[i] = matrix->data[i];
-        printf("%f\n", matrix->data[i]);
 
         usz curr_col_idx = matrix->col_index[i] - base_col_idx;
         target->col_index[i] = curr_col_idx;

@@ -178,7 +178,6 @@ int main(int argc, char **argv)
         ascii *filename = argv[1];
         coo_matrix_t mat;
         mm_load_coo(filename, &mat);
-        //print_COO(&mat);
         global_matrix = &mat;
         
         vector_t vec;
@@ -189,18 +188,14 @@ int main(int argc, char **argv)
     
     distribute_coo(global_matrix, &local_matrix);
    
-    //printf("Rank [%d]\n", rank);
-    //print_COO(&local_matrix);
-    
     csr_matrix_t local_csr;
     coo_to_csr(&local_matrix, &local_csr); 
     
-    print_CSR(&local_csr);
-
-    /*vector_t local_vector;
-    init_random_vector_MPI(&local_vector, local_matrix.dim_x);*/
+    vector_t local_vector;
+    init_random_vector_MPI(&local_vector, local_matrix.dim_x);
     
-    //csr_mv_MPI(&local_csr, &local_vector, global_vector);
+    // This is wrong
+    csr_mv_MPI(&local_csr, &local_vector, global_vector);
 
     if(rank == 0)
     {
