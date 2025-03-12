@@ -4,3 +4,4 @@
 #include "gauss_seidel.h"
 #include "conjugate_gradient.h"
 #include "GMRES.h"
+#include "power_iteration.h"

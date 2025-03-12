@@ -17,7 +17,8 @@ add_library(Source_Lib
     Algorithms/Solvers/gauss_seidel.c
     Algorithms/Solvers/conjugate_gradient.c
     Algorithms/Solvers/GMRES.c
-    
+    Algorithms/Solvers/power_iteration.c
+
     Algorithms/Linear_Algebra/dgemv.c
     MPI/spmv_MPI.c
 

@@ -67,6 +67,7 @@ void mm_load_coo(const ascii *filepath, coo_matrix_t *matrix)
     allocate_COO(rows, cols, nnz, matrix);
     matrix->row_index = ia;
     matrix->col_index = ja;
+    free(matrix->data);
     val = (f64 *)realloc(val, sizeof(f64) * nnz);
     matrix->data = val;
 }

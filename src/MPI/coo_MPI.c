@@ -13,7 +13,7 @@ void distribute_coo(coo_matrix_t *global_matrix, coo_matrix_t *local_matrix)
         i32 rows_per_proc   = global_matrix->dim_x / size;
         i32 start_row       = rank * rows_per_proc;
         i32 end_row         = (rank == size -1) ? global_matrix->dim_x : start_row + rows_per_proc;
-        usz nnz_global = global_matrix->nnz;
+        usz nnz_global      = global_matrix->nnz;
 
         usz send_count[size];
         memset(send_count, 0, size * sizeof(usz));

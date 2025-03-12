@@ -3,7 +3,7 @@
 #include "dgemv.h" 
 
 // r = alpha*A*x + beta*b
-void general_mv(f64 alpha, matrix_t *A, vector_t *x, f64 beta, vector_t *b, vector_t *r)
+void general_mv(f64 alpha, matrix_t const *A, vector_t *x, f64 beta, vector_t *b, vector_t *r)
 {
     //const usz N = x->size;
     const usz rows = A->dim_x;
@@ -25,7 +25,7 @@ void general_mv(f64 alpha, matrix_t *A, vector_t *x, f64 beta, vector_t *b, vect
     }
 }
 
-void csr_mv(f64 alpha, csr_matrix_t *A, vector_t *x, f64 beta, vector_t *b, vector_t *r)
+void csr_mv(f64 alpha, csr_matrix_t const *A, vector_t *x, f64 beta, vector_t *b, vector_t *r)
 {
     assert(A->dim_x == x->size);
 

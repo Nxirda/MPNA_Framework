@@ -5,8 +5,6 @@
 #include "fillers.h"
 #include "mpi_wrapper.h"
 
-
-
 int main(int argc, char **argv)
 {
     MPI_Init(&argc, &argv);
@@ -45,7 +43,6 @@ int main(int argc, char **argv)
     allocate_vector(&result, local_csr.dim_y);
     
     csr_mv_MPI(&local_csr, &local_vector, &result);
-
     
     MPI_Barrier(MPI_COMM_WORLD);
     if(rank == 0)
@@ -76,10 +73,14 @@ int main(int argc, char **argv)
         }
         free_vector(&sequential_res);
         free_CSR(&sequential_mat);
+        free(&global_matrix);
     }
 
-
+    free(&local_vector);
+    free_CSR(&local_csr);
     free_vector(&result);
+
+    free_COO(&local_matrix);
     //framework_test(argc, argv);
     MPI_Finalize();
     exit(EXIT_SUCCESS);

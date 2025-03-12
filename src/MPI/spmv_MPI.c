@@ -20,4 +20,7 @@ void csr_mv_MPI(csr_matrix_t *matrix, vector_t *x, vector_t *b)
     //copy_vector(&res, b);
     
     MPI_Allreduce(res.data, b->data, res.size, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+    free_vector(&res);
+    free_vector(&fake);
 }

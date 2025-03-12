@@ -96,6 +96,24 @@ int all_solver_test()
         printf("Csr iterations     : %ld\n", csr_iter);
         printf("\n");
     }
+/******************************************************************************/
+    {
+        printf("====== Power Iteration Testing (quick) ======\n");
+        
+        init_constant_vector(&x_csr, 0.0);
+        init_constant_vector(&x_general, 0.0);
+
+        f64 gen_eigenvalue = power_iteration_general(&general, &x_general, &b, iter);
+        f64 csr_eigenvalue = power_iteration_csr(&csr, &x_csr, &b, iter);
+        
+        //u8 gmres_equal = equal_vector(&x_general, &x_csr); 
+        u8 power_iteration_equal = (gen_eigenvalue == csr_eigenvalue); 
+
+        print_test_result(power_iteration_equal, "Power Iteration Implementation");
+        printf("General eigenvalue : %ld\n", gen_eigenvalue);
+        printf("Csr eigenvalue     : %ld\n", csr_eigenvalue);
+        printf("\n");
+    }
     
     free_CSR(&csr);
     free_matrix(general);
